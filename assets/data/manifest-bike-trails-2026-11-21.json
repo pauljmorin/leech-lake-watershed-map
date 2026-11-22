@@ -1,0 +1,23 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "bike-trails.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/trans_state_trails_minnesota/FeatureServer/0",
+      "query": "where use_bike = 1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 19,
+      "bytes": 157418,
+      "trail_name_counts": {
+        "Paul Bunyan State Trail": 9,
+        "Heartland State Trail": 10
+      },
+      "surface_type_counts": {
+        "Asphalt": 19
+      },
+      "mntbik_flagged_count": 19,
+      "field_miles_sum": 70.09,
+      "drawn_clipped_miles": 55.11,
+      "caveats": "DNR State Trails service, filter use_bike = 1 -- the same rule as the ITM viewer bike layer (2026-11-18). Mountain-bike-only singletrack (use_mntbik = 1 AND use_bike = 0) is a different use class and is NOT in this file. The Mesabi Trail is not in the DNR service at all and does not enter this watershed, so no OSM harvest was needed. Geometries are clipped to the HUC8 boundary, so a trail crossing the boundary is cut; the `lengthmile` field is the FULL segment length and can exceed the drawn clipped length. Feature count matches the live returnCountOnly count for use_bike = 1."
+    }
+  }
+}

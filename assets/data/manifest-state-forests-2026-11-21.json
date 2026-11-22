@@ -1,0 +1,24 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "state-forests.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/bdry_state_forest/FeatureServer/4",
+      "query": "where 1=1, geometry = HUC8 07010102 polygon (site/data/watershed-whole-basin.geojson), spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 8,
+      "bytes": 492607,
+      "management_units_layer3_count": 8,
+      "management_units_layer3_names": [
+        "Badoura",
+        "Battleground",
+        "Bowstring",
+        "Centennial",
+        "Foot Hills",
+        "Land O'Lakes",
+        "Paul Bunyan",
+        "Welsh Lake"
+      ],
+      "caveats": "DNR State Forest boundaries (layer 4). Research (\u00a74.8b) verified 8 in both layer 4 and layer 3 (management units) -- this pull: 8 boundaries, 8 management units. Layer 3 names match layer 4 names exactly. Layer 3 is NOT written as a file; it is the administrative roll-up of the same 8 forests. Count identical against the alternate WBD clip geometry (scripts/huc8-07010102-clip.geojson). acres is the boundary layer's acreage (Bowstring 526,285 ac per research)."
+    }
+  }
+}

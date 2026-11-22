@@ -1,0 +1,20 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-walker-shoreland-district.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Municipalities/MapServer/71",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 1,
+      "bytes": 9681,
+      "count_check_returnCountOnly": 1,
+      "ids_listed": 1,
+      "recount_after_pull": 1,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 4556,
+      "vertices_after_simplification": 244,
+      "simplification": "Douglas-Peucker ~7 m (parcels/NWI pattern)",
+      "caveats": "City of Walker Shoreland District (sublayer of the Zoning JAN 2026 group layer 70). The layer carries no attributes beyond FID -- the district is the geometry. FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored."
+    }
+  }
+}

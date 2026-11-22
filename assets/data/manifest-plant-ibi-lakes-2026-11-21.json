@@ -1,0 +1,16 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "plant-ibi-lakes.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_lake_plant_ibi/FeatureServer/0",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 125,
+      "bytes": 2503544,
+      "fqi_threshold_status_counts": {
+        "at or above": 125
+      },
+      "caveats": "DNR lake plant eutrophication IBI scores. Research verification (synthesis \u00a73.9, 20 Nov 2026): 125 lakes. This pull: 125 features (live returnCountOnly 125). Count MATCHES the research verification. recent_fqi / recent_taxa_richness are from the most recent plant survey; fqi_threshold_status is vs the eutrophication threshold; min/max fields span all surveys per lake."
+    }
+  }
+}

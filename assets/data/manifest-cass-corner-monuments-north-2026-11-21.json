@@ -1,0 +1,27 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-corner-monuments-north.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Surveyor_ControlPoints/MapServer/0",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 3896,
+      "bytes": 1716321,
+      "count_check_returnCountOnly": 3896,
+      "ids_listed": 3896,
+      "recount_after_pull": 3896,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 3896,
+      "vertices_after_simplification": 3896,
+      "simplification": "none",
+      "caveats": "PLSS corner monuments, north half of county. Cert_By is the certifying surveyor (public-record provenance). Last_Edited_By / EDITCOORD / EDITORCOM dropped (staff editor fields). FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored.",
+      "top_CORNER_STATUS": {
+        "UNK": 1755,
+        "CC-N": 1040,
+        "CC-GPS": 629,
+        "OTHER": 400,
+        "NC-GPS": 72
+      }
+    }
+  }
+}

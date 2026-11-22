@@ -1,0 +1,15 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "surveyed-lakes.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_lakes_surveyed_by_mndnr/FeatureServer/0",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 142,
+      "bytes": 3006223,
+      "has_data_y": 137,
+      "no_survey_url": 0,
+      "caveats": "DNR lakes surveyed by MNDNR (LakeFinder link layer). Research verification (synthesis \u00a71.1, 20 Nov 2026): 142 surveyed lake polygons, 137 with has_data='Y'. This pull: 142 features (live returnCountOnly 142), 137 with has_data='Y'. Counts MATCH the research verification. survey_url is the per-lake LakeFinder report link; the service carries no survey contents (no species, no catch rates) -- those live only on the LakeFinder pages. Clip geometry is the site/data/watershed-whole-basin.geojson HUC8 07010102 polygon (same boundary as scripts/huc8-07010102-clip.geojson, 4776 vs 4743 vertices)."
+    }
+  }
+}

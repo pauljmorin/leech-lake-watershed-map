@@ -1,0 +1,24 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-tullibee-refuge-lakes.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Additional_Layers/MapServer/1",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 11,
+      "bytes": 79972,
+      "count_check_returnCountOnly": 11,
+      "ids_listed": 11,
+      "recount_after_pull": 11,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 8246,
+      "vertices_after_simplification": 1859,
+      "simplification": "Douglas-Peucker ~7 m (parcels/NWI pattern)",
+      "caveats": "Tullibee (Cisco) Refuge Lakes -- sublayer of the Refuge group layer 0 (not queryable). The refuge itself has no polygon of its own; it is defined by its lakes (this layer) and its upstream minors. DOW numbers join to the viewer's lakes layer. FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored.",
+      "top_Cisco_Tier": {
+        "2": 9,
+        "1": 2
+      }
+    }
+  }
+}

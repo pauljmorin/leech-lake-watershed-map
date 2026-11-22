@@ -1,0 +1,547 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "source": "GNIS Archive, frozen Aug 2021 (superseded; NOT current GNIS)",
+    "source_file": "downloads/gnis/MN_Features_20210825.txt (50,552 rows; 3,524 historical-flagged)",
+    "pull_date": "2026-11-21",
+    "huc8": "07010102",
+    "clip": "scripts/huc8-07010102-clip.geojson (HUC8 07010102 polygon)",
+    "filter": "historical-flagged ('(historical)' name suffix) AND feature_class in {Post Office, School, Church, Cemetery, Locale, Dam, Populated Place} AND coordinates present (rows with Unknown / 0,0 coordinates dropped)",
+    "feature_count": 28,
+    "result": "Historic-places layer from the frozen Aug 2021 GNIS Archive. This is a SEPARATE file from site/data/gnis-historic.geojson, which is the verified-zero record from current GNIS (published 20261102). Do not merge the two: archive records are superseded and must stay labeled as archive records."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.6902778,
+          47.1580556
+        ]
+      },
+      "properties": {
+        "feature_id": 2093916,
+        "name": "Benedict Railroad Station (historical)",
+        "feature_class": "Locale",
+        "county": "Hubbard",
+        "map_name": "Benedict",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.12444,
+          47.16806
+        ]
+      },
+      "properties": {
+        "feature_id": 2071449,
+        "name": "Boy River (historical)",
+        "feature_class": "Locale",
+        "county": "Cass",
+        "map_name": "Boy River",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.54722,
+          47.02667
+        ]
+      },
+      "properties": {
+        "feature_id": 2071409,
+        "name": "Cyphers (historical)",
+        "feature_class": "Locale",
+        "county": "Cass",
+        "map_name": "Walker",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.21111,
+          47.24611
+        ]
+      },
+      "properties": {
+        "feature_id": 2071443,
+        "name": "Federal Dam (historical)",
+        "feature_class": "Locale",
+        "county": "Cass",
+        "map_name": "Federal Dam",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.7938889,
+          47.3013889
+        ]
+      },
+      "properties": {
+        "feature_id": 2094614,
+        "name": "Guthrie Railroad Station (historical)",
+        "feature_class": "Locale",
+        "county": "Hubbard",
+        "map_name": "Guthrie",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.7541667,
+          47.2152778
+        ]
+      },
+      "properties": {
+        "feature_id": 2093965,
+        "name": "Laporte (historical)",
+        "feature_class": "Locale",
+        "county": "Hubbard",
+        "map_name": "Laporte",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.62583,
+          47.2875
+        ]
+      },
+      "properties": {
+        "feature_id": 2071270,
+        "name": "Raboin (historical)",
+        "feature_class": "Locale",
+        "county": "Cass",
+        "map_name": "Steamboat Lake",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.03944,
+          47.11556
+        ]
+      },
+      "properties": {
+        "feature_id": 2071263,
+        "name": "Tobique (historical)",
+        "feature_class": "Locale",
+        "county": "Cass",
+        "map_name": "Tobique",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.57861,
+          47.10222
+        ]
+      },
+      "properties": {
+        "feature_id": 2071209,
+        "name": "Walker (historical)",
+        "feature_class": "Locale",
+        "county": "Cass",
+        "map_name": "Walker",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.6275,
+          47.25083
+        ]
+      },
+      "properties": {
+        "feature_id": 2071351,
+        "name": "Wilkinson (historical)",
+        "feature_class": "Locale",
+        "county": "Cass",
+        "map_name": "Steamboat Lake",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.28833,
+          47.08306
+        ]
+      },
+      "properties": {
+        "feature_id": 2071437,
+        "name": "Brevik Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Whipholt",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.54722,
+          47.02667
+        ]
+      },
+      "properties": {
+        "feature_id": 2071408,
+        "name": "Cyphers Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Walker",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.11667,
+          47.225
+        ]
+      },
+      "properties": {
+        "feature_id": 2071381,
+        "name": "Gould Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Boy River",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.7908333,
+          47.3002778
+        ]
+      },
+      "properties": {
+        "feature_id": 2094616,
+        "name": "Guthrie Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Hubbard",
+        "map_name": "Guthrie",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.13,
+          46.98333
+        ]
+      },
+      "properties": {
+        "feature_id": 2071375,
+        "name": "Inguadona Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Longville",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.8763889,
+          47.2347222
+        ]
+      },
+      "properties": {
+        "feature_id": 2093876,
+        "name": "Kabekona Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Hubbard",
+        "map_name": "Lake George",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.65972,
+          47.04167
+        ]
+      },
+      "properties": {
+        "feature_id": 2071374,
+        "name": "Lake Alice Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Akeley",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.63889,
+          47.16667
+        ]
+      },
+      "properties": {
+        "feature_id": 2071354,
+        "name": "Leech Lake Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Benedict",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.8230556,
+          47.3669444
+        ]
+      },
+      "properties": {
+        "feature_id": 2093871,
+        "name": "Nary Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Hubbard",
+        "map_name": "Guthrie",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.54444,
+          47.10944
+        ]
+      },
+      "properties": {
+        "feature_id": 2071276,
+        "name": "Onigum Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Walker",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.33639,
+          46.86333
+        ]
+      },
+      "properties": {
+        "feature_id": 2071273,
+        "name": "Pontoria Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Lake Ada",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.62583,
+          47.2875
+        ]
+      },
+      "properties": {
+        "feature_id": 2071269,
+        "name": "Raboin Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Steamboat Lake",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.8333333,
+          47.3888889
+        ]
+      },
+      "properties": {
+        "feature_id": 2093867,
+        "name": "Rosby Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Hubbard",
+        "map_name": "Bemidji East",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.41583,
+          47.36889
+        ]
+      },
+      "properties": {
+        "feature_id": 2071267,
+        "name": "Schley Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Sucker Lakes",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.02889,
+          46.975
+        ]
+      },
+      "properties": {
+        "feature_id": 2071265,
+        "name": "Snowball Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Laura Lake",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.03944,
+          47.11556
+        ]
+      },
+      "properties": {
+        "feature_id": 2071262,
+        "name": "Tobique Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Tobique",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.18778,
+          46.92056
+        ]
+      },
+      "properties": {
+        "feature_id": 2071384,
+        "name": "Wabedo Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Longville",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.6275,
+          47.25083
+        ]
+      },
+      "properties": {
+        "feature_id": 2071350,
+        "name": "Wilkinson Post Office (historical)",
+        "feature_class": "Post Office",
+        "county": "Cass",
+        "map_name": "Steamboat Lake",
+        "source": "GNIS Archive, frozen Aug 2021",
+        "location_precision": "archive record"
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "huc10-subwatersheds.geojson": {
+      "source_url": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/5",
+      "query": "where HUC10 IN ('0701010201','0701010202','0701010203','0701010204','0701010206') (no clip geometry -- HUC10s are within HUC8 by definition); count verified live by returnCountOnly",
+      "pull_date": "2026-11-21",
+      "feature_count": 5,
+      "bytes": 314177,
+      "huc10s": {
+        "0701010201": {
+          "name": "Steamboat River",
+          "areasqkm": 347.45,
+          "areaacres": 85857.35
+        },
+        "0701010202": {
+          "name": "Kabekona River",
+          "areasqkm": 312.67,
+          "areaacres": 77262.31
+        },
+        "0701010203": {
+          "name": "Woman Lake",
+          "areasqkm": 422.38,
+          "areaacres": 104372.35
+        },
+        "0701010204": {
+          "name": "Boy River",
+          "areasqkm": 602.2,
+          "areaacres": 148807.65
+        },
+        "0701010206": {
+          "name": "Leech Lake River",
+          "areasqkm": 442.21,
+          "areaacres": 109272.69
+        }
+      },
+      "caveats": "WBD MapServer layer 5 (10-digit HU), same service as the existing direct-to-lake pull (HUC10 0701010205). HUC10 0205 is NOT in this file -- it is already mapped as watershed-direct-to-lake.geojson. Names and areas match synthesis \u00a74.2 (0201 Steamboat River 347.45 km2, 0202 Kabekona River 312.67, 0203 Woman Lake 422.38, 0204 Boy River 602.20, 0206 Leech Lake River 442.21) within 0.5 km2."
+    }
+  }
+}

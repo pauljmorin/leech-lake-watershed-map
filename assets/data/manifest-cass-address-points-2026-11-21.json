@@ -1,0 +1,20 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-address-points.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/DLANBasemap_Cass/MapServer/2",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 12753,
+      "bytes": 6793886,
+      "count_check_returnCountOnly": 12752,
+      "ids_listed": 12753,
+      "recount_after_pull": 12752,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 12753,
+      "vertices_after_simplification": 12753,
+      "simplification": "none",
+      "caveats": "DLAN basemap address points. ADDRESS is the point's own street address (the feature's identity). LONGITUDE/LATITUDE dropped (redundant with geometry). FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored."
+    }
+  }
+}

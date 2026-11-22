@@ -1,0 +1,30 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "counties.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_mngeo/bdry_counties_minnesota/FeatureServer/0",
+      "query": "where co_name IN ('Beltrami','Cass','Hubbard'), geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 3,
+      "bytes": 365121,
+      "counties": {
+        "Beltrami": {
+          "co_fips": "007",
+          "co_code": "27007",
+          "co_gnis": 659449
+        },
+        "Cass": {
+          "co_fips": "021",
+          "co_code": "27021",
+          "co_gnis": 659456
+        },
+        "Hubbard": {
+          "co_fips": "057",
+          "co_code": "27057",
+          "co_gnis": 659474
+        }
+      },
+      "caveats": "MnGeo Bdry Counties Minnesota, layer 0. Full county polygons intersecting HUC8 are kept -- geometries are NOT cut to the watershed boundary. Count verified live by returnCountOnly against the HUC8 clip geometry (3), matching synthesis \u00a74.1 (Beltrami FIPS 007, Cass 021, Hubbard 057). Only the part of each county inside HUC8 belongs to the watershed; Beltrami and Hubbard are mostly outside it."
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-property-addresses.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Elections/MapServer/0",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 13433,
+      "bytes": 3955489,
+      "count_check_returnCountOnly": 13433,
+      "ids_listed": 13433,
+      "recount_after_pull": 13433,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 13433,
+      "vertices_after_simplification": 13433,
+      "simplification": "none",
+      "caveats": "Property Address Information (911 addressing). OWNAME and all OWADR/OWZIP owner-address fields dropped. PHYSADDR is the point's own street address (the feature's identity), kept; no owner name is stored. FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored.",
+      "top_APPRCL": {
+        "38-124-0002": 51,
+        "45-108-0001": 33,
+        "45-117-0002": 31,
+        "45-109-0002": 27,
+        "15-123-0001": 26,
+        "49-005-4001": 24,
+        "38-113-0001": 19,
+        "96-356-0250": 18,
+        "45-107-4300": 16,
+        "72-019-0002": 15
+      }
+    }
+  }
+}

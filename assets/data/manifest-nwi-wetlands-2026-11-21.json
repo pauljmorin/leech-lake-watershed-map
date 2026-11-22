@@ -1,0 +1,75 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "nwi-wetlands.geojson": {
+      "source_url": "https://fwspublicservices.wim.usgs.gov/wetlandsmapservice/rest/services/Wetlands/MapServer/0",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; fetched in 500-feature chunks by OBJECTID",
+      "pull_date": "2026-11-21",
+      "feature_count": 71539,
+      "bytes": 52885417,
+      "count_check_returnCountOnly": 71539,
+      "recount_after_pull": 71539,
+      "bbox_count_for_reference": 264701,
+      "total_acres": 374521.7,
+      "by_wetland_type": {
+        "Freshwater Emergent Wetland": 18293,
+        "Freshwater Pond": 2445,
+        "Freshwater Forested/Shrub Wetland": 48999,
+        "Lake": 818,
+        "Riverine": 984
+      },
+      "top_attribute_codes": {
+        "PSS1C": 23622,
+        "PEM1D": 9024,
+        "PSS1D": 6491,
+        "PEM1C": 5841,
+        "PFO1D": 3319,
+        "PSS3Dg": 1767,
+        "PFO1A": 1458,
+        "PUBH": 1452,
+        "PSS1/EM1D": 1398,
+        "PEM1A": 1279
+      },
+      "vertices_before_simplification": 4810153,
+      "vertices_after_simplification": 960222,
+      "simplification": "Douglas-Peucker ~7 m (same tolerance as the parcels pull)",
+      "route": "ArcGIS REST chunked pull (see caveats). The synthesis-preferred per-county FileGDB download is not offered by FWS: downloads are whole-state only (MN FileGDB zip 2.19 GB, GeoPackage zip 4.14 GB, https://documentst.ecosphere.fws.gov/wetlands/data/State-Downloads/MN_geodatabase_wetlands.zip, Last-Modified 2026-10-02), and the mapper's download-by-watershed is 'still under development'. Measured download speed from this VM ~0.56 MB/s, so the state FileGDB would take ~65 minutes; the clipped count (71,539, not the 264,701 bbox count) makes the REST chunked pull feasible, so it was used.",
+      "vintage": "Vintage is PER PROJECT, not a single date: the Data_Source 'Image Year' layer clipped to HUC8 gives IMAGE_YR counts {'2014': 1}. The 1979-88 photography cited in inventory 3.5 is what the 2010 lakeshore model used; it is NOT the current NWI vintage for this area. See data_source_counts / source_type_counts for the project sources.",
+      "data_source_image_year": {
+        "layer": 3,
+        "label": "Image Year",
+        "feature_count": 1,
+        "image_year_counts": {
+          "2014": 1
+        },
+        "data_source_counts": {
+          "": 1
+        },
+        "source_type_counts": {
+          "CIR": 1
+        },
+        "project_name_counts": {
+          "Central Minnesota": 1
+        }
+      },
+      "data_source_source_type": {
+        "layer": 1,
+        "label": "Source Type",
+        "feature_count": 1,
+        "image_year_counts": {
+          "2014": 1
+        },
+        "data_source_counts": {
+          "": 1
+        },
+        "source_type_counts": {
+          "CIR": 1
+        },
+        "project_name_counts": {
+          "Central Minnesota": 1
+        }
+      },
+      "caveats": "USFWS National Wetlands Inventory, Version 2 Surface Waters and Wetlands (Cowardin-classified wetland + deepwater polygons). Intended use scale 1:12,000 per NWI metadata; NWI is not a legal or regulatory delineation of wetland boundaries. VERY HEAVY layer (71,539 polygons) -- needs simplification (done, ~7 m) and zoom-gating like parcels before publishing. Vintage is PER PROJECT, not a single date: the Data_Source 'Image Year' layer clipped to HUC8 gives IMAGE_YR counts {'2014': 1}. The 1979-88 photography cited in inventory 3.5 is what the 2010 lakeshore model used; it is NOT the current NWI vintage for this area. See data_source_counts / source_type_counts for the project sources."
+    }
+  }
+}

@@ -1,0 +1,313 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.58407,
+          47.10166
+        ]
+      },
+      "properties": {
+        "name": "Walker",
+        "type": "town",
+        "county": "Cass",
+        "founding_date": "1896-03-10",
+        "date_note": "Village incorporated Mar 10, 1896; first train Aug 8, 1896; named for lumberman Thomas B. Walker by founder Patrick McGarry.",
+        "source": "https://leechlake.org/about/",
+        "location_precision": "approximate",
+        "in_watershed": "yes",
+        "thpo_band": false,
+        "notes": "Railroad/logging + resort town; county seat of Cass County."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.21774,
+          47.24288
+        ]
+      },
+      "properties": {
+        "name": "Federal Dam",
+        "type": "town",
+        "county": "Cass",
+        "founding_date": "1911",
+        "date_note": "Grew around the USACE Leech Lake Dam; post office 1910, incorporated as a village 1911.",
+        "source": "https://www.lincolnmarketing.us/Archive/Cass-MN-Guide.pdf",
+        "location_precision": "approximate",
+        "in_watershed": "yes",
+        "thpo_band": false,
+        "notes": "Dam/company town, paired with the Leech Lake Dam."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.12128,
+          47.16706
+        ]
+      },
+      "properties": {
+        "name": "Boy River",
+        "type": "town",
+        "county": "Cass",
+        "founding_date": "1922",
+        "date_note": "Community grew in the 1880s; post office, railway station and general stores by 1910; incorporated 1922.",
+        "source": "https://www.lincolnmarketing.us/Archive/Cass-MN-Guide.pdf",
+        "location_precision": "approximate",
+        "in_watershed": "yes",
+        "thpo_band": false,
+        "notes": "Logging/railroad village on the Boy River."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.54122,
+          47.12213
+        ]
+      },
+      "properties": {
+        "name": "Onigum",
+        "type": "community",
+        "county": "Cass",
+        "founding_date": null,
+        "date_note": "Leech Lake Agency opened after the 1855 treaty on the south shore of Leech Lake at Onigum; agency moved ~2.5 mi across the bay in 1899, then to Cass Lake in 1922. No community founding date verified.",
+        "source": "https://en.wikipedia.org/wiki/Onigum,_Minnesota",
+        "location_precision": "approximate",
+        "in_watershed": "yes",
+        "thpo_band": true,
+        "notes": "Agency/mission community, not a railroad town. Pointer only; Old/New Agency building sites not survey-verified."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.61203,
+          47.3824
+        ]
+      },
+      "properties": {
+        "name": "Cass Lake",
+        "type": "neighbor",
+        "county": "Cass",
+        "founding_date": "1898",
+        "date_note": "Established 1898 with the Great Northern Railway; originally 'Tuller', renamed Cass Lake by Mar 1899. Later agency HQ and tribal HQ.",
+        "source": "https://en.wikipedia.org/wiki/Cass_Lake,_Minnesota",
+        "location_precision": "approximate",
+        "in_watershed": "neighbor",
+        "thpo_band": false,
+        "notes": "Labeled neighbor: the city polygon was verified 0-intersects with HUC8 07010102 (synthesis \u00a74.4); this point also falls outside the clip."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.20874,
+          47.34298
+        ]
+      },
+      "properties": {
+        "name": "Bena",
+        "type": "town",
+        "county": "Cass",
+        "founding_date": null,
+        "date_note": "Railway village, 1880s; name from the Ojibwe word for partridge; post office 1898. No exact founding/incorporation year verified.",
+        "source": "https://www.lincolnmarketing.us/Archive/Cass-MN-Guide.pdf",
+        "location_precision": "approximate",
+        "in_watershed": "yes",
+        "thpo_band": false,
+        "notes": "Clip result: IN the watershed (point-in-polygon vs HUC8 07010102), contrary to the earlier 'likely outside' expectation; corroborated by synthesis \u00a74.4, which lists Bena among the 9 incorporated places intersecting the watershed."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -93.9361,
+          47.32333
+        ]
+      },
+      "properties": {
+        "name": "Ball Club",
+        "type": "community",
+        "county": "Itasca",
+        "founding_date": null,
+        "date_note": "One of the eleven Reservation communities (MN Indian Affairs). Individual founding date not verified.",
+        "source": "http://mn.gov/indian-affairs/tribal-nations-in-minnesota/gaa-zagaskwaajimekaag-leech-lake-band-of-ojibwe.jsp",
+        "location_precision": "approximate",
+        "in_watershed": "neighbor",
+        "thpo_band": true,
+        "notes": "Present-day Reservation community; founding history needs Band sources. Outside the watershed (neighbor)."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -93.98511,
+          47.55473
+        ]
+      },
+      "properties": {
+        "name": "Inger",
+        "type": "community",
+        "county": "Itasca",
+        "founding_date": null,
+        "date_note": "One of the eleven Reservation communities (MN Indian Affairs). Individual founding date not verified.",
+        "source": "http://mn.gov/indian-affairs/tribal-nations-in-minnesota/gaa-zagaskwaajimekaag-leech-lake-band-of-ojibwe.jsp",
+        "location_precision": "approximate",
+        "in_watershed": "neighbor",
+        "thpo_band": true,
+        "notes": "Present-day Reservation community; founding history needs Band sources. Outside the watershed (neighbor)."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.13669,
+          47.6286
+        ]
+      },
+      "properties": {
+        "name": "Squaw Lake",
+        "type": "community",
+        "county": "Itasca",
+        "founding_date": null,
+        "date_note": "One of the eleven Reservation communities (MN Indian Affairs). Individual founding date not verified. Not to be confused with Squaw Lake (now Little Woman Lake) in Cass County.",
+        "source": "http://mn.gov/indian-affairs/tribal-nations-in-minnesota/gaa-zagaskwaajimekaag-leech-lake-band-of-ojibwe.jsp",
+        "location_precision": "approximate",
+        "in_watershed": "neighbor",
+        "thpo_band": true,
+        "notes": "Present-day Reservation community; founding history needs Band sources. Outside the watershed (neighbor)."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.31997,
+          47.1694
+        ]
+      },
+      "properties": {
+        "name": "Sugar Point",
+        "type": "community",
+        "county": "Cass",
+        "founding_date": null,
+        "date_note": "One of the eleven Reservation communities (MN Indian Affairs). Individual founding date not verified. Site of the Battle of Sugar Point, Oct 5, 1898.",
+        "source": "http://mn.gov/indian-affairs/tribal-nations-in-minnesota/gaa-zagaskwaajimekaag-leech-lake-band-of-ojibwe.jsp",
+        "location_precision": "approximate",
+        "in_watershed": "yes",
+        "thpo_band": true,
+        "notes": "Point placed at the GNIS Sugar Point cape (47.1694, -94.3200) on the north shore of Leech Lake; community center approximate. Present-day Reservation community; founding history needs Band sources."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.574,
+          47.1693
+        ]
+      },
+      "properties": {
+        "name": "Oak Point",
+        "type": "community",
+        "county": "Cass",
+        "founding_date": null,
+        "date_note": "One of the eleven Reservation communities (MN Indian Affairs). Formerly Squaw Point, renamed Oak Point in 1995. Individual founding date not verified.",
+        "source": "http://mn.gov/indian-affairs/tribal-nations-in-minnesota/gaa-zagaskwaajimekaag-leech-lake-band-of-ojibwe.jsp",
+        "location_precision": "approximate",
+        "in_watershed": "yes",
+        "thpo_band": true,
+        "notes": "Point placed at the geographic center of Squaw/Oak Point, Leech Lake (47.1693, -94.5740, NYBG herbarium georeference of the GNIS point); community center approximate. Present-day Reservation community; founding history needs Band sources."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.6503,
+          47.4306
+        ]
+      },
+      "properties": {
+        "name": "Mission",
+        "type": "community",
+        "county": "Beltrami",
+        "founding_date": null,
+        "date_note": "One of the eleven Reservation communities (MN Indian Affairs). Individual founding date not verified. Community lies west of Cass Lake, between lakes Andrusia and Cass.",
+        "source": "http://mn.gov/indian-affairs/tribal-nations-in-minnesota/gaa-zagaskwaajimekaag-leech-lake-band-of-ojibwe.jsp",
+        "location_precision": "approximate",
+        "in_watershed": "neighbor",
+        "thpo_band": true,
+        "notes": "Point placed approximately at the Mission Catholic Cemetery / Hwy 8 area, Ten Lake Township (47.4306, -94.6503, Minnesota Genealogical Society); no GNIS populated-place coordinate verified for Mission itself \u2014 exact community center needs Band confirmation. Outside the watershed (neighbor)."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.48,
+          47.48361
+        ]
+      },
+      "properties": {
+        "name": "Pennington",
+        "type": "community",
+        "county": "Beltrami",
+        "founding_date": null,
+        "date_note": "One of the eleven Reservation communities (MN Indian Affairs); also called Cass River. Individual founding date not verified.",
+        "source": "http://mn.gov/indian-affairs/tribal-nations-in-minnesota/gaa-zagaskwaajimekaag-leech-lake-band-of-ojibwe.jsp",
+        "location_precision": "approximate",
+        "in_watershed": "neighbor",
+        "thpo_band": true,
+        "notes": "Unincorporated community 9.5 mi NE of Cass Lake; GNIS feature ID 657774 (47.48361, -94.48000). Present-day Reservation community; founding history needs Band sources. Outside the watershed (neighbor)."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.43194,
+          47.06833
+        ]
+      },
+      "properties": {
+        "name": "Smokey Point",
+        "type": "community",
+        "county": "Cass",
+        "founding_date": null,
+        "date_note": "One of the eleven Reservation communities (MN Indian Affairs). Individual founding date not verified.",
+        "source": "http://mn.gov/indian-affairs/tribal-nations-in-minnesota/gaa-zagaskwaajimekaag-leech-lake-band-of-ojibwe.jsp",
+        "location_precision": "approximate",
+        "in_watershed": "yes",
+        "thpo_band": true,
+        "notes": "Point placed approximately at Smokey Point Rd, Walker Bay south shore; community center approximate. Present-day Reservation community; founding history needs Band sources."
+      }
+    }
+  ]
+}

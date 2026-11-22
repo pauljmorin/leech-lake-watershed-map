@@ -1,0 +1,53 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "sensitive-lakeshore-polygons.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_sensitive_lakeshore/FeatureServer/1",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 33,
+      "bytes": 1639371,
+      "analysis_counts": {
+        "Full": 12,
+        "Abbreviated": 21
+      },
+      "lake_names": [
+        "Baby",
+        "Big Deep",
+        "Big Sand",
+        "Birch",
+        "Blackwater",
+        "Boy",
+        "Crooked",
+        "Eleventh Crow Wing",
+        "Garfield",
+        "Inguadona",
+        "Kabekona",
+        "Leech",
+        "Little Boy",
+        "Long",
+        "Lower Sucker",
+        "Lower Trelipe",
+        "Mud",
+        "Mule",
+        "Pleasant",
+        "Portage",
+        "Six Mile",
+        "Steamboat",
+        "Stony",
+        "Swamp",
+        "Ten Mile",
+        "Thirteen",
+        "Thunder",
+        "Town Line",
+        "Unnamed",
+        "Wabedo",
+        "Webb",
+        "Winnibigoshish",
+        "Woman"
+      ],
+      "leech_sens_acres": 13078.8568287,
+      "caveats": "DNR Sensitive Lakeshore Highly Sensitive Shoreland (layer 1) -- high-score shoreline clusters buffered by 1/4 mile, per the 2010 report method. This service IS the GIS of the 2010 Thompson & Perleberg model output (checked 2026-11-21). Leech Lake's five sensitive areas come as ONE multipart polygon per lake (sens_acres 13,078.86), NOT five separately named features -- the viewer cannot label 'Area 1...5' from this file; the 2010 report PDF (Fig. 76) remains the source for the five-area framing and names. `analysis` separates 'Full' from 'Abbreviated' (rapid-assessment) lakes; carry the field so the viewer can label/filter them. `sens_acres` is the FULL-feature value; edge-lake polygons are clipped to the HUC8 boundary, so drawn area can be smaller. Loon nesting areas and plant beds are PDF-only and are NOT in this file. Feature count matches the live returnCountOnly count."
+    }
+  }
+}

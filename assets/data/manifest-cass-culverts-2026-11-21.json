@@ -1,0 +1,21 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-culverts.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Additional_Layers/MapServer/13",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 6,
+      "bytes": 1404,
+      "count_check_returnCountOnly": 6,
+      "ids_listed": 6,
+      "recount_after_pull": 6,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 6,
+      "vertices_after_simplification": 6,
+      "simplification": "none",
+      "caveats": "Culverts: Cass County (sublayer of the Culvert Inventory group layer 12, which is not queryable). OWNERSHIP here is an ownership class, not a person. The McKinley Twp culvert sublayer (14) was not in the approved scope. FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored.",
+      "top_OWNERSHIP": {}
+    }
+  }
+}

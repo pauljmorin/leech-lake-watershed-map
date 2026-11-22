@@ -1,0 +1,8 @@
+{
+  "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_pca/env_orv_waters/FeatureServer/3",
+  "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+  "pull_date": "2026-11-21",
+  "feature_count": 1,
+  "bytes": 24386,
+  "caveats": "MPCA Outstanding Resource Value Waters (ORVW), Minn.R. 7050.0180, listed in Minn.R. 7050.0470 (effective 2008-03-17). Layer 3 ORVWLakes: lakes are a subset/enhancement of the 1:24,000 NHD lakes, catalogued for rulemaking/regulatory purposes. ORV is NOT the same as the 'exceptional-resource lakes' / exceptional-use list from the inventory (23 lakes): the ORV list is much narrower -- only waters formally designated under Minn.R. 7050.0470 -- and the two concepts must not be conflated. WIRE-IN RECOMMENDATION (research): carry the ORV lake as a POPUP ANNOTATION on the Kabekona lake popup rather than as a standalone layer. In-watershed count verified live (returnCountOnly) = 1."
+}

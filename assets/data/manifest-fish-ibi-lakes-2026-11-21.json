@@ -1,0 +1,30 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "fish-ibi-lakes.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_ibi_lakes_fisheries/FeatureServer/0",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 111,
+      "bytes": 3467909,
+      "status_counts": {
+        "At or Above General Use Impairment Threshold": 23,
+        "At or Above Exceptional Use Threshold": 65,
+        "Below General Use Impairment Threshold": 4,
+        "Below Exceptional Use Threshold": 3,
+        "Sampled-Wholly Within Tribal Nation": 16
+      },
+      "survey_year_range": [
+        2005,
+        2024
+      ],
+      "leech_lake_dow_11020300_rows": 0,
+      "caveats": "DNR lake fish IBI (Index of Biological Integrity) scores. Research verification (synthesis \u00a71.4, 20 Nov 2026) said '111 lakes'. CORRECTION: the live returnCountOnly count is 111, but the unit is SURVEY ROWS, not lakes -- this pull holds 111 features across 46 distinct lakes (1-8 surveys per lake, survey years 2005-2024); sibling rows for one lake share identical geometry. The synthesis '111 lakes' figure is therefore wrong as a lake count; the row count matches the live service exactly. CONFIRMED: Leech Lake itself (DOW 11020300) is NOT in this service (direct query dow='11020300' returns 0 rows) -- large lakes are assessed under the Large Lake Program, not the small-lake FIBI. ibi_score is the fish-community score; status is vs the impairment threshold; num_*/prop_* fields are species-count metrics (raw and standardised).",
+      "distinct_lakes": 46,
+      "surveys_per_lake_range": [
+        1,
+        8
+      ]
+    }
+  }
+}

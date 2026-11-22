@@ -1,0 +1,34 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "atv-trails.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/trans_ohv_trails_mn/FeatureServer/0",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects; ATV split atv_class_1='X' OR atv_class_2='X' (ORV-only rides with ATV per ITM rule)",
+      "pull_date": "2026-11-21",
+      "feature_count": 199,
+      "bytes": 165783,
+      "ohv_service_in_watershed_count": 406,
+      "ohm_only_excluded": 207,
+      "also_ohm_count": 66,
+      "orv_only_included": 0,
+      "unflagged_excluded": [],
+      "funding_type_counts": {
+        "GIA": 199
+      },
+      "trail_name_counts": {
+        "Round River Drive": 118,
+        "Soo Line North: Cass": 81
+      },
+      "atv_class_1_count": 199,
+      "atv_class_2_count": 199,
+      "surface_type_counts": {
+        "Gravel": 97,
+        "Natural/Soil/Grass/ No Improvements": 101,
+        "None": 1
+      },
+      "field_miles_sum": 72.03,
+      "drawn_clipped_miles": 68.33,
+      "caveats": "DNR OHV Trails service, designated ATV/UTV trails only. A feature is in this file iff atv_class_1 or atv_class_2 is 'X' (ITM rule); ORV (4x4)-only features ride with the ATV file. OHM-only features are NOT here (count recorded above). This is designated trails only -- NOT the NCT ATV-proposal work (proposed trails near the North Country Trail); no proposed route is drawn. Geometries are clipped to the HUC8 boundary, so a trail crossing the boundary is cut; the `miles` field is the FULL segment length and can exceed the drawn clipped length. funding_type distinguishes state vs Grant-in-Aid (see counts). Feature count matches the live returnCountOnly count for the OHV service; the ATV split is applied after the pull."
+    }
+  }
+}

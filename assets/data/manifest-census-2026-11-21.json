@@ -1,0 +1,47 @@
+{
+  "data_pending": "Data pulled 2026-11-21 via Census API (ACS 2024 5-year + PL 2020); extension variables (race, Hispanic origin, poverty, education) pulled 2026-11-21.",
+  "global_caveats": "Census units render WHOLE across the three counties; the watershed polygon mutes what lies outside, client-side. No areal allocation, no population-weighted splits. 2020 PL is a usual-residence count (April 1, 2020) \u2014 the summer population is invisible in it; the seasonal-home stock (ACS B25004_006E) is the measure of the vacation-home presence, not a population count. AIAN-area ACS follows the Census AIAN boundary (land-only, ~623k ac) while the viewer's displayed BIA reservation geometry measures ~824k ac \u2014 same acreage footnote as the reservation layer.",
+  "layers": {
+    "census-blockgroups.geojson": {
+      "bytes": 235712,
+      "caveats": "84 block groups: Beltrami 37, Cass 29, Hubbard 18 (statewide file holds 4,703). 500k files are generalized for small-scale display \u2014 fine at watershed zoom, approximate at parcel zoom. Datum NAD83, carried as lon/lat and treated as WGS84 by the viewer (difference under 2 m). All geometries validated with shapely; 0 invalid skipped. Data values (population, seasonal homes, income) are NOT in this file \u2014 they come from scripts/pull_census_data.py, which needs a free Census API key.",
+      "feature_count": 84,
+      "pull_date": "2026-11-21",
+      "query": "TIGER/Line 2024 cartographic boundary (500k) block groups, state 27; filtered to whole counties Beltrami (007), Cass (021), Hubbard (057) only \u2014 NOT clipped to the watershed (Paul's design rule, Nov 21, 2026: census units render whole; the watershed polygon mutes what lies outside, client-side)",
+      "source_url": "https://www2.census.gov/geo/tiger/GENZ2024/shp/cb_2024_27_bg_500k.zip"
+    },
+    "census-tracts.geojson": {
+      "bytes": 148307,
+      "caveats": "32 tracts: Beltrami 14, Cass 11, Hubbard 7 (statewide file holds 1,502). Tracts are the aggregation fallback when block-group MOEs are too large to map. Same 500k generalization and NAD83 notes as the block-group file. Data values come from scripts/pull_census_data.py (Census API key required).",
+      "feature_count": 32,
+      "pull_date": "2026-11-21",
+      "query": "TIGER/Line 2024 cartographic boundary (500k) tracts, state 27; filtered to whole counties Beltrami (007), Cass (021), Hubbard (057) only \u2014 NOT clipped to the watershed",
+      "source_url": "https://www2.census.gov/geo/tiger/GENZ2024/shp/cb_2024_27_tract_500k.zip"
+    },
+    "census-blockgroups-data.geojson": {
+      "source_url": "https://api.census.gov/data/2024/acs/acs5 and https://api.census.gov/data/2020/dec/pl",
+      "query": "block group:* in state:27 county:007/021/057; ACS variables B25001_001E, B25001_001M, B25002_002E, B25002_002M, B25002_003E, B25002_003M, B25004_006E, B25004_006M, B25003_002E, B25003_002M, B25003_003E, B25003_003M, B25034_001E, B25034_001M, B25035_001E, B25035_001M, B01001_001E, B01001_001M, B01002_001E, B01002_001M, B19013_001E, B19013_001M, B25010_001E, B25010_001M, B01001_003E, B01001_003M, B01001_004E, B01001_004M, B01001_005E, B01001_005M, B01001_006E, B01001_006M, B01001_027E, B01001_027M, B01001_028E, B01001_028M, B01001_029E, B01001_029M, B01001_030E, B01001_030M, B01001_020E, B01001_020M, B01001_021E, B01001_021M, B01001_022E, B01001_022M, B01001_023E, B01001_023M, B01001_024E, B01001_024M, B01001_025E, B01001_025M, B01001_044E, B01001_044M, B01001_045E, B01001_045M, B01001_046E, B01001_046M, B01001_047E, B01001_047M, B01001_048E, B01001_048M, B01001_049E, B01001_049M; PL P1_001N, H1_001N; joined to census-blockgroups.geojson by GEOID; extension 2026-11-21: ACS variables B02001_001E, B02001_001M, B02001_002E, B02001_002M, B02001_003E, B02001_003M, B02001_004E, B02001_004M, B02001_005E, B02001_005M, B02001_008E, B02001_008M, B03003_001E, B03003_001M, B03003_002E, B03003_002M, B03003_003E, B03003_003M, B17001_001E, B17001_001M, B17001_002E, B17001_002M, B15003_001E, B15003_001M, B15003_017E, B15003_017M, B15003_018E, B15003_018M, B15003_019E, B15003_019M, B15003_020E, B15003_020M, B15003_021E, B15003_021M, B15003_022E, B15003_022M, B15003_023E, B15003_023M, B15003_024E, B15003_024M, B15003_025E, B15003_025M",
+      "pull_date": "2026-11-21",
+      "feature_count": 84,
+      "bytes": 458506,
+      "caveats": "ACS block-group MOEs are large, often +/-30-50% of the estimate; every estimate is stored with its MOE (fields ending in M) and must show it in the popup. Derived shares use root-sum-of-squares MOEs for summed age bands. -666666666 (not applicable) stored as null. Values are for WHOLE census units; nothing is clipped or allocated to the watershed."
+    },
+    "census-tracts-data.geojson": {
+      "source_url": "https://api.census.gov/data/2024/acs/acs5 and https://api.census.gov/data/2020/dec/pl",
+      "query": "tract:* in state:27 county:007/021/057; same variables; joined to census-tracts.geojson by GEOID; extension 2026-11-21: ACS variables B02001_001E, B02001_001M, B02001_002E, B02001_002M, B02001_003E, B02001_003M, B02001_004E, B02001_004M, B02001_005E, B02001_005M, B02001_008E, B02001_008M, B03003_001E, B03003_001M, B03003_002E, B03003_002M, B03003_003E, B03003_003M, B17001_001E, B17001_001M, B17001_002E, B17001_002M, B15003_001E, B15003_001M, B15003_017E, B15003_017M, B15003_018E, B15003_018M, B15003_019E, B15003_019M, B15003_020E, B15003_020M, B15003_021E, B15003_021M, B15003_022E, B15003_022M, B15003_023E, B15003_023M, B15003_024E, B15003_024M, B15003_025E, B15003_025M",
+      "pull_date": "2026-11-21",
+      "feature_count": 32,
+      "bytes": 234239,
+      "caveats": "ACS block-group MOEs are large, often +/-30-50% of the estimate; every estimate is stored with its MOE (fields ending in M) and must show it in the popup. Derived shares use root-sum-of-squares MOEs for summed age bands. -666666666 (not applicable) stored as null. Values are for WHOLE census units; nothing is clipped or allocated to the watershed."
+    },
+    "census-aian-1940.json": {
+      "source_url": "https://api.census.gov/data/2024/acs/acs5 and https://api.census.gov/data/2020/dec/pl",
+      "query": "american indian area/alaska native area/hawaiian home land:1940; same variables; single reservation-level record (GEOID 1940R); extension 2026-11-21: ACS variables B02001_001E, B02001_001M, B02001_002E, B02001_002M, B02001_003E, B02001_003M, B02001_004E, B02001_004M, B02001_005E, B02001_005M, B02001_008E, B02001_008M, B03003_001E, B03003_001M, B03003_002E, B03003_002M, B03003_003E, B03003_003M, B17001_001E, B17001_001M, B17001_002E, B17001_002M, B15003_001E, B15003_001M, B15003_017E, B15003_017M, B15003_018E, B15003_018M, B15003_019E, B15003_019M, B15003_020E, B15003_020M, B15003_021E, B15003_021M, B15003_022E, B15003_022M, B15003_023E, B15003_023M, B15003_024E, B15003_024M, B15003_025E, B15003_025M",
+      "pull_date": "2026-11-21",
+      "feature_count": 1,
+      "bytes": 2959,
+      "caveats": "ACS block-group MOEs are large, often +/-30-50% of the estimate; every estimate is stored with its MOE (fields ending in M) and must show it in the popup. Derived shares use root-sum-of-squares MOEs for summed age bands. -666666666 (not applicable) stored as null. Values are for WHOLE census units; nothing is clipped or allocated to the watershed. AIAN ACS estimates carry large MOEs; tribal enrollment is a different number from census population \u2014 do not conflate them."
+    }
+  },
+  "pull_date": "2026-11-21"
+}

@@ -1,0 +1,30 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "nwis-groundwater-wells.geojson": {
+      "source_url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&huc=07010102&siteStatus=all",
+      "query": "NWIS site service, huc=07010102, siteStatus=all vs siteStatus=active; site_tp_cd=GW",
+      "pull_date": "2026-11-21",
+      "feature_count": 958,
+      "bytes": 490816,
+      "active_listed": 117,
+      "actually_reporting_live": [],
+      "caveats": "USGS NWIS groundwater wells. status is active_listed (in the siteStatus=active set) vs inactive -- the RDB output carries no status flag, so status comes from the two-query comparison. 'Active-listed' does NOT mean currently transmitting: of the 117 active-listed GW wells (mostly SHAEP-study wells at Williams Lake and Shingobee), NONE returned an IV value in the last 7 days. live_reporting is yes/no for active-listed sites (IV, P7D) and null for inactive sites. The Nov 20 synthesis said 'only 2 are listed active' -- that counted surface-water sites only; the live active set is 124 (117 GW + 5 SP + 1 ST + 1 LK)."
+    },
+    "nwis-surface-gauges.geojson": {
+      "source_url": "https://waterservices.usgs.gov/nwis/site/?format=rdb&huc=07010102&siteStatus=all",
+      "query": "NWIS site service, huc=07010102, siteStatus=all vs siteStatus=active; site_tp_cd in (LK, ST)",
+      "pull_date": "2026-11-21",
+      "feature_count": 32,
+      "bytes": 16347,
+      "active_listed": [
+        "05205200",
+        "05205900"
+      ],
+      "actually_reporting_live": [
+        "05205900"
+      ],
+      "caveats": "USGS NWIS surface-water gauges (lake + stream). Only 2 sites are listed active: 05205900 Leech Lake at Sugar Point (LK) -- LIVE on IV, gage height; and 05205200 Boy River near Remer (ST) -- listed active but silent: zero IV values in the last 7 days and zero DV values in the last 30 days, as on 20 Nov. The DV service returns zero series for these sites over P30D, so IV is the only live channel. Discontinued dam gauges 05206000 (Leech Lake at Federal Dam, LK) and 05206500 (Leech Lake River at Federal Dam, ST) are inactive in this file; dam outflow is USACE-only now. 16 sites in the HUC8 inventory are neither GW nor LK/ST and are in neither file: 5 SP springs (all active-listed, all silent on IV), 4 AT met stations, 3 SB TDR soil sites, 2 FA-WTP facility outputs (no coordinates), 1 GW-TH test hole, 1 LA-OU lake outlet."
+    }
+  }
+}

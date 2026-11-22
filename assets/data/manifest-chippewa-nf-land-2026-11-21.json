@@ -1,0 +1,27 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "chippewa-nf-land.geojson": {
+      "source_url": "https://data.fs.usda.gov/geodata/edw/edw_resources/fc/BdyDesg_LSRS_NationalForestSystemLandUnit.gdb.zip",
+      "source_page": "https://data.fs.usda.gov/geodata/edw/datasets.php",
+      "query": "NFSLANDUNITNAME LIKE '%Chippewa%' on BdyDesg_LSRS_NationalForestSystemLandUnit (328 features); GDB downloaded 2026-11-21, converted with GDAL",
+      "pull_date": "2026-11-21",
+      "feature_count": 1,
+      "bytes": 109260,
+      "gis_acres_attribute": 1599789.388,
+      "overlap_measurements": {
+        "huc8_acres": 857971.7,
+        "boundary_acres_measured": 1597734.2,
+        "landunit_acres_measured": 1599384.0,
+        "reservation_acres_measured": 823248.6,
+        "boundary_intersect_huc8_acres": 535256.1,
+        "landunit_intersect_huc8_acres": 535216.1,
+        "reservation_within_boundary_acres": 741573.0,
+        "reservation_within_boundary_pct": 90.1,
+        "reservation_within_landunit_pct": 90.4,
+        "huc8_within_boundary_pct": 62.4
+      },
+      "caveats": "USFS EDW download route (live EDW ArcGIS service returns HTTP 403 from this VM). Downloaded NationalForestSystemLandUnit GDB (https://data.fs.usda.gov/geodata/edw/edw_resources/fc/BdyDesg_LSRS_NationalForestSystemLandUnit.gdb.zip) -- 'National Forest System Land Units' -- and filtered to NFSLANDUNITNAME LIKE '%Chippewa%' (1 of 328 features). DISCREPANCY -- DO NOT READ THIS FILE AS NFS OWNERSHIP: the Chippewa land-unit feature carries GIS_ACRES 1599789.4 (measured 1599384.0 ac), essentially the same gross area as the proclaimed boundary (1,598,139 ac), NOT the ~666k-acre National Forest System land figure in synthesis \u00a74.7 / inventory 4.1. The LandUnit dataset is the administrative land unit (gross area incl. inholdings), not the federal-ownership parcels. The ownership layer is the separate EDW SurfaceOwnership dataset (S_USA.SurfaceOwnership, 'Surface Ownership Parcels, detailed' -- Forest Service vs Non-Forest Service ownership parcels) listed on the same datasets page; it was NOT pulled in this run. The boundary and land-unit geometries are NOT identical (boundary 8 polygons / 3,215 vertices; land unit 4 polygons / 2,800 vertices; same bounding box) but cover the same gross area. Source CRS NAD83 lon/lat. Full Forest extent kept; NOT clipped to HUC8. In-watershed overlap: 535216.1 ac. Reservation within land unit: 90.4% (measured)."
+    }
+  }
+}

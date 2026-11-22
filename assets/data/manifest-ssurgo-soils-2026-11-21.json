@@ -1,0 +1,20 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "ssurgo-hydric-soils.geojson": {
+      "source_url": "https://websoilsurvey.sc.egov.usda.gov/DSD/Download/Cache/SSA/wss_SSA_MN021_%5B2026-09-07%5D.zip ; https://websoilsurvey.sc.egov.usda.gov/DSD/Download/Cache/SSA/wss_SSA_MN057_%5B2026-09-07%5D.zip ; https://websoilsurvey.sc.egov.usda.gov/DSD/Download/Cache/SSA/wss_SSA_MN007_%5B2026-09-07%5D.zip (Web Soil Survey 'Download Soils Data' cache; file name carries the survey saverest date 2026-09-07 from SDA sacatalog). Tabular cross-check: https://sdmdataaccess.sc.egov.usda.gov/tabular/post.rest (SDA REST).",
+      "query": "HYDRIC-SOIL CUT ONLY. Per-county SSURGO spatial zips (soilmu_a_*.shp) merged; map units kept iff a MAJOR component (comp.txt majcompflag='Yes') has hydricrating='Yes'; polygons clipped to HUC8 07010102 polygon in site/data/watershed-whole-basin.geojson, simplified 0.0001 deg (~11 m), coordinates rounded to 6 decimals. Build script: scripts/pull_ssurgo_hydric.py.",
+      "pull_date": "2026-11-21",
+      "feature_count": 6651,
+      "bytes": 10413502,
+      "features_by_county": {
+        "MN021": 5567,
+        "MN057": 1076,
+        "MN007": 8
+      },
+      "distinct_mukeys_in_file": 61,
+      "total_clipped_acres": 251392.0,
+      "caveats": "HYDRIC CUT ONLY -- the full soils pull (all map units, 64,856 polygons county-wide) is DEFERRED, not attempted in this run; it needs a separate decision on simplification/delivery size. Hydric rule: map unit is hydric iff a major component is hydric (comp.txt, same 2026-09-07 vintage as the spatial files). Cross-checked live against SDA REST component table with the same rule: EXACT MATCH -- 161 distinct hydric mukeys county-wide (Beltrami MN007 94, Cass MN021 38, Hubbard MN057 29), zero difference in either direction. The broader 'any-component hydric' count is 405 map units (MN007 194, MN021 111, MN057 100) -- NOT used; the major-component rule is the standard Web Soil Survey map-unit hydric rating. SDA quirks found live 2026-11-21: SDA's muaggatt view has NO hydricrating column ('Invalid column name hydricrating'), and SDA's mapunit view has NO areasymbol column -- the county join must go mapunit.lkey = legend.lkey. SDA REST itself was reachable (HTTP 200 throughout) despite the earlier trail-map 502; treat as reachable-but-flaky. Beltrami contributes only 8 features: the HUC8 barely enters Beltrami County (clip max lat 47.437; Beltrami starts ~47.41) -- a ~3 km sliver at the watershed's northern tip; only 485 of Beltrami's 22,494 shapes even overlap the clip bbox. This is geography, not a pull error. Clip is watershed-whole-basin.geojson (DNR Major 8, 'Leech Lake River', 857,968 ac); its bounds are identical to scripts/huc8-07010102-clip.geojson (WBD), differing by 33 vertices only. Geometry: holes preserved (an earlier ring-union pass filled holes and overstated clipped acres by 8,262; corrected -- final total 251,392.0 clipped acres, ~29% of the 857,968-ac watershed). 5 features are slivers under 0.01 acres_clip from clipping. muacres is the map unit's total acres in its survey area, NOT the clipped feature's acres; acres_clip is the geodesic acres of the clipped feature (pyproj Geod, GRS80). Shapefile .prj states GCS_WGS_1984; coordinates treated as WGS84 lon/lat for the viewer. Spot-checks vs SDA live 2026-11-21 (musym/muname match; major component hydric='Yes'): mukey 397743 musym '544' 'Cathro muck, occasionally ponded, 0 to 1 percent slopes' (Cass); mukey 397772 musym '788' 'Cathro-Seelyeville complex' (Cass, two major hydric components); mukey 2520458 musym '1113' 'Haslie, Seelyeville, and Cathro soils, frequently ponded, 0 to 1 percent slopes' (Beltrami, three major hydric components). No verified static per-county zip URL exists: .../Spatial/SDMWGS84Geographic/MN021.zip is 404 (re-confirmed 2026-11-21); use the dated WSS cache URLs above. County zips: MN021 Cass 60,569,051 bytes; MN057 Hubbard 29,458,279 bytes; MN007 Beltrami 58,624,849 bytes (downloaded 2026-11-21, retained in scripts/_work_ssurgo/)."
+    }
+  }
+}

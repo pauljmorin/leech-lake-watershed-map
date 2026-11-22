@@ -1,0 +1,71 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "wells.geojson": {
+      "source_url": "https://arcgis.web.health.state.mn.us/arcgis/rest/services/3GADX/MWIMap/MapServer/0",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 7654,
+      "bytes": 5073205,
+      "use_code_counts": {
+        "DO": 7248,
+        "IN": 10,
+        "OT": 52,
+        "CO": 6,
+        "AB": 5,
+        "": 25,
+        "PZ": 57,
+        "TW": 29,
+        "EN": 17,
+        "SI": 9,
+        "EX": 13,
+        "MW": 145,
+        "OB": 7,
+        "IR": 14,
+        "UN": 11,
+        "DW": 2,
+        "RM": 2,
+        "IC": 2
+      },
+      "status_code_counts": {
+        "A": 7252,
+        "S": 262,
+        "U": 45,
+        "": 95
+      },
+      "location_method_counts": {
+        "5": 377,
+        "1": 3444,
+        "X": 1646,
+        "6": 135,
+        "2": 96,
+        "7": 62,
+        "": 92,
+        "T": 1003,
+        "4": 4,
+        "3": 49,
+        "G": 506,
+        "S": 97,
+        "Y": 1,
+        "8": 142
+      },
+      "county_counts": {
+        "Cass": 6089,
+        "Hubbard": 1503,
+        "Beltrami": 62
+      },
+      "depth_range_ft": [
+        0,
+        585
+      ],
+      "drill_year_range": [
+        1910,
+        2026
+      ],
+      "swl_flag_y": 7410,
+      "swl_measured_count": 7430,
+      "no_geometry_rows": 0,
+      "caveats": "Minnesota Well Index / County Well Index (MGS + MDH), MapServer layer 0 Wells. The index does NOT contain every well: the service states 'It by no means contains information for all the wells and borings and the absence of information about a well on a property does not mean there is no well on that property.' Public water-supply well locations are excluded by the service. Layer 4 'Unlocated Wells' is NOT included. Locations are approximate for many wells -- see location_method_counts (LOC_MC): 1 address verification, G GPS/info from data source, S site plan, 2 name on mailbox, 3 lot/block, 4 plat book, 5 owner site visit, 6 neighbour, 7 other, 8 address with parcel boundary, E emergency services number, T tag on well, U unlocated, X tax records, Y owner phone call. WELLNAME is typically the owner's name as recorded in the public index. ADDRESS and CITY were not requested or stored. DATE_DRLL is integer YYYYMMDD. SWL is a Y/N flag for static-water-level data; SWLAVGMEAS is the average measured static water level in feet. 33 wells carry DEPTH_DRLL = 0, which is a not-recorded placeholder, not a 0-ft well. STATUS_C 'S' (262 wells) is not decoded in any reference table fetched (the CWI documentation does not define it) -- do not label it without a source. USE_C 'EN' (17, Enbridge/DNR/AET environmental borings) and 'IC' (2, MnDOT) are not in the service's 31-row Use Code Descriptions table. Feature count matches the live returnCountOnly count."
+    }
+  }
+}

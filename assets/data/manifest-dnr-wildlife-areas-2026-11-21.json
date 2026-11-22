@@ -1,0 +1,13 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "dnr-wildlife-areas.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/bdry_dnr_wildlife_admin/FeatureServer/0",
+      "query": "where 1=1, geometry = HUC8 07010102 polygon (site/data/watershed-whole-basin.geojson), spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 3,
+      "bytes": 148451,
+      "caveats": "DNR Wildlife management (admin) areas. Research (\u00a74.8f) verified 3: Park Rapids, Brainerd, Grand Rapids -- this pull: 3 features. Count identical against the alternate WBD clip geometry (scripts/huc8-07010102-clip.geojson). Administrative areas (office territories), not habitat boundaries. The DNR Parks & Trails admin area (Lake Bemidji district, 1 feature) is deliberately skipped -- administrative, not a park boundary; no state park exists in the watershed (\u00a74.8d)."
+    }
+  }
+}

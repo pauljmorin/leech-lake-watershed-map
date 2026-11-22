@@ -1,0 +1,27 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "chippewa-nf-boundary.geojson": {
+      "source_url": "https://data.fs.usda.gov/geodata/edw/edw_resources/fc/BdyAdm_LSRS_AdministrativeForest.gdb.zip",
+      "source_page": "https://data.fs.usda.gov/geodata/edw/datasets.php",
+      "query": "FORESTNAME = 'Chippewa National Forest' on BdyAdm_LSRS_AdministrativeForest (112 features); GDB downloaded 2026-11-21, converted with GDAL",
+      "pull_date": "2026-11-21",
+      "feature_count": 1,
+      "bytes": 125363,
+      "gis_acres_attribute": 1598138.87521645,
+      "overlap_measurements": {
+        "huc8_acres": 857971.7,
+        "boundary_acres_measured": 1597734.2,
+        "landunit_acres_measured": 1599384.0,
+        "reservation_acres_measured": 823248.6,
+        "boundary_intersect_huc8_acres": 535256.1,
+        "landunit_intersect_huc8_acres": 535216.1,
+        "reservation_within_boundary_acres": 741573.0,
+        "reservation_within_boundary_pct": 90.1,
+        "reservation_within_landunit_pct": 90.4,
+        "huc8_within_boundary_pct": 62.4
+      },
+      "caveats": "USFS Enterprise Data Warehouse (EDW) download route -- the live EDW ArcGIS service (https://apps.fs.usda.gov/arcgis/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer) returns HTTP 403 from this VM, so no live-service clipped count was obtainable. Downloaded AdministrativeForest GDB (https://data.fs.usda.gov/geodata/edw/edw_resources/fc/BdyAdm_LSRS_AdministrativeForest.gdb.zip) -- 'Administrative Forest Boundaries', the downloadable equivalent of the ForestSystemBoundaries proclaimed-boundary dataset -- and filtered to FORESTNAME='Chippewa National Forest' (1 of 112 national-forest features). Source CRS NAD83 lon/lat. Full proclaimed-boundary extent kept (8 polygons, 3,215 vertices); NOT clipped to HUC8. GIS_ACRES 1598138.9 (attribute) vs 1597734.2 ac measured from the geometry in UTM 15N. In-watershed overlap: 535256.1 ac of the 857971.7 ac HUC8 (62.4% of the watershed) lies inside the proclaimed boundary. Reservation overlap (measured): 741573.0 ac of 823248.6 ac Reservation geometry (90.1%) lies within the proclaimed boundary -- the synthesis's '~90% of Reservation land lies within the Forest boundary' (inventory 4.2) IS supported by the measured data."
+    }
+  }
+}

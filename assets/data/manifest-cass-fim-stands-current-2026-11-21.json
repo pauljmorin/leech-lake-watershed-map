@@ -1,0 +1,32 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-fim-stands-current.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Forestry_ForestPlan_Base/MapServer/63",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 6341,
+      "bytes": 11515210,
+      "count_check_returnCountOnly": 6341,
+      "ids_listed": 6341,
+      "recount_after_pull": 6341,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 380648,
+      "vertices_after_simplification": 131199,
+      "simplification": "Douglas-Peucker ~7 m (parcels/NWI pattern)",
+      "caveats": "FIM Stands (Current). Same field fence as the Forest Plan layer (species-detail blocks and personal names dropped). FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored.",
+      "top_MAIN_CTYPE": {
+        "A": 2842,
+        "Mh": 516,
+        "LB": 410,
+        "NH": 256,
+        "NP": 226,
+        "Bi": 226,
+        "MH": 173,
+        "Ash": 167,
+        "O": 163,
+        "LG": 155
+      }
+    }
+  }
+}

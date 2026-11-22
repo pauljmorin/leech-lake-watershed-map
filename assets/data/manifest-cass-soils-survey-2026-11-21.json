@@ -1,0 +1,32 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-soils-survey.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Soils/MapServer/1",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 9649,
+      "bytes": 22215211,
+      "count_check_returnCountOnly": 9649,
+      "ids_listed": 9649,
+      "recount_after_pull": 9649,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 1997072,
+      "vertices_after_simplification": 524365,
+      "simplification": "Douglas-Peucker ~7 m (parcels/NWI pattern)",
+      "caveats": "Cass County Soil Survey -- the FULL survey (~140 map-unit codes), not just the hydric cut the viewer already has. SOILS_PG is the survey page reference. FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored.",
+      "top_SOILS_DESC": {
+        "HISTOSOLS, DEPRESSIONAL": 1621,
+        "OPEN WATER": 647,
+        "CATHRO-SEELYEVILLE COMPLEX, FREQUENTLY FLOODED": 462,
+        "HIWOOD-ZIMMERMAN ASSOCIATION, NEARLY LEVEL TO HILLY": 388,
+        "TYPIC BOROHEMISTS, NONACID-TYPIC BOROSAPRISTS ASSOCIATION": 359,
+        "REDBY FINE SAND": 340,
+        "CUTAWAY LOAMY SAND, 1 TO 10 PERCENT SLOPES": 268,
+        "SANDWICK LOAMY SAND": 220,
+        "STUNTZ VERY FINE SANDY LOAM": 214,
+        "RIFLE MUCKY PEAT": 193
+      }
+    }
+  }
+}

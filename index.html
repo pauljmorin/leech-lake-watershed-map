@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leech Lake Watershed</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/leaflet.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="panel">
+  <div class="masthead">
+    <!-- No organisation name or logo in the masthead (Nov 21, 2026):
+         the masthead carries the map's name in words only. -->
+    <div class="masthead-words">
+      <h1>Leech Lake Watershed</h1>
+      <p class="masthead-tagline">The lakes, the people, the place</p>
+    </div>
+  </div>
+
+  <!-- Layer search (Nov 21, 2026): typing filters the layer
+       list by label — app.js shows only the matching layers and
+       the groups/sub-groups that contain them. -->
+  <div id="layer-search-wrap">
+    <label class="layer-search-label" for="layer-search">Find a layer</label>
+    <input type="search" id="layer-search"
+      placeholder="Filter layers — try &ldquo;wetland&rdquo;"
+      autocomplete="off">
+    <p id="layer-search-none" class="layer-search-none" hidden>
+      No layer matches &ldquo;<span id="layer-search-term"></span>&rdquo;.</p>
+  </div>
+
+  <div id="layer-toggles"><!-- checkboxes injected by app.js --></div>
+
+  <h2 id="basemap-head">Basemap</h2>
+  <div id="background-choices"><!-- base choices injected by app.js --></div>
+
+  <p id="load-status" class="status"></p>
+
+  <p class="panel-foot"><a href="assets/data-sources.html" target="_blank"
+    rel="noopener" id="data-sources-link">Data sources</a>
+    <a href="assets/about.html" target="_blank"
+    rel="noopener" id="about-link">About this map</a></p>
+</div>
+<div id="map">
+  <!-- Copy link button (user-requested, restored Nov 21, 2026):
+       an icon-only button in the upper-right corner of the map,
+       "like the trail map". It composes a saved-view link —
+       centre, zoom, basemap and ticked layers in a #v=…&b=…&l=…
+       hash — and copies it (app.js: viewUrl / copyLinkButton).
+       app.js also restores that view from the hash on load.
+       When the Clipboard API is unavailable the fallback card
+       below shows the link in a readonly input instead; on
+       success the "Link copied" pill confirms. -->
+  <div id="copy-link-corner">
+    <button type="button" id="copy-link-btn" title="Copy link"
+      aria-label="Copy link"><svg xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+    <div id="copy-link-card" class="corner-card" hidden>
+      <h2>Copy this link</h2>
+      <p>The link carries this exact view &mdash; centre, zoom,
+        basemap and ticked layers.</p>
+      <input type="text" id="copy-link-input" readonly
+        aria-label="Link to this view">
+      <p><button type="button" id="copy-link-close">Close</button></p>
+    </div>
+    <div id="copy-link-pill" role="status" hidden>Link copied</div>
+  </div>
+  <!-- Reference material (legend) lives behind this corner button,
+       toggled by app.js; the card starts closed. -->
+  <div id="corner-ui">
+    <div id="legend-card" class="corner-card" hidden>
+      <h2>Legend</h2>
+      <div id="legend"><!-- legend injected by app.js --></div>
+    </div>
+    <div id="corner-buttons">
+      <button type="button" id="btn-legend" aria-pressed="false">Legend</button>
+    </div>
+  </div>
+</div>
+<script src="assets/leaflet.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

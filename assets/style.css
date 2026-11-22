@@ -1,0 +1,2999 @@
+/* Itasca Moraine Chapter trail map — v4.
+   Plain CSS, no build step. Layout: fixed info panel left, map fills
+   the rest of the viewport. Design tokens per DESIGN-REVIEW §1 —
+   app.js carries matching constants (COLORS) at its head. */
+
+:root {
+  --paper: #f7f5ee;        /* panel background */
+  --paper-line: #c9c2ab;   /* panel borders */
+  --paper-hover: #f1eee1;  /* quiet hover / notice background */
+  --ink: #1c2a1e;          /* body text */
+  --ink-soft: #5a665c;     /* keys, captions */
+  --trail: #1a9850;        /* Itasca Moraine green */
+  --trail-deep: #14532d;   /* termini, emphasis */
+  --adopted: #e08214;      /* amber */
+  --adopted-deep: #6e4400; /* section label text */
+  --gap: #d7301f;          /* red */
+  --neighbour: #7e6a9e;    /* Laurentian Lakes */
+  --tick: #37474f;         /* boundary bars */
+  --header-tint: #eef3e6;  /* record-sheet header band */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  color: var(--ink);
+}
+
+/* Unify the six base maps into the panel's warm register
+   (DESIGN-REVIEW D3). Overlays live in other panes, unaffected. */
+.leaflet-tile-pane { filter: saturate(0.82) sepia(0.06) brightness(1.01); }
+
+/* Leaflet chrome recoloured to the paper system (DESIGN-REVIEW §5). */
+.leaflet-bar a,
+.leaflet-control-layers {
+  background: var(--paper);
+  border-color: var(--paper-line);
+}
+.leaflet-bar { border-radius: 8px; overflow: hidden; }
+.leaflet-control-layers { border-radius: 8px; }
+
+/* Basemap chooser (Nov 11, 2026 designer pass): the Leaflet radio
+   list wearing the panel's own clothes — group headings borrow
+   .tog-group's voice, rows are thumb-height, and the current base
+   is a tinted, bold row, not just a checked dot. app.js inserts
+   the .base-group headings and keeps .base-active in step. */
+.leaflet-control-layers-expanded {
+  padding: 8px 10px 10px;
+  max-width: 78vw;
+}
+.leaflet-control-layers-base { min-width: 188px; }
+.leaflet-control-layers-base .base-group {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 10px 0 2px;
+}
+.leaflet-control-layers-base .base-group:first-child { margin-top: 2px; }
+.leaflet-control-layers-base label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+.leaflet-control-layers-base label:hover { background: var(--paper-hover); }
+.leaflet-control-layers-base label.base-active {
+  background: var(--header-tint);
+  font-weight: 650;
+  box-shadow: inset 0 0 0 1px #b9cba5;
+}
+.leaflet-control-layers-base input { accent-color: var(--trail); margin: 0; }
+@media (pointer: coarse) {
+  .leaflet-control-layers-base label { min-height: 40px; }
+}
+.leaflet-control-scale-line {
+  background: rgba(247, 245, 238, 0.88);
+  border-color: var(--paper-line);
+  font-size: 10px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--trail);
+  outline-offset: 2px;
+}
+
+#panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--paper);
+  border-right: 1px solid var(--paper-line);
+  padding: 14px 16px 20px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+/* Masthead (design-notes 2026-11-10 §1): the association logo
+   carries the association, the wordmark carries the chapter —
+   one row on plain paper, closed by a hairline so the story box
+   keeps sole ownership of the green tint. */
+.masthead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--paper-line);
+}
+.masthead-logo {
+  height: 44px;
+  width: auto;
+  max-width: 128px;
+  object-fit: contain;
+  object-position: left center;
+}
+#panel h1 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--trail-deep);
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  margin: 0;
+}
+.masthead-desc {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  margin: 3px 0 0;
+}
+/* Masthead tagline (Nov 21, 2026): the subtitle under the title —
+   a quiet italic line in the soft ink, not a tracked kicker. */
+.masthead-tagline {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 3px 0 0;
+  line-height: 1.3;
+}
+#panel h2 {
+  font-size: 0.95rem;
+  margin: 16px 0 6px;
+  border-bottom: 1px solid #d8d2bd;
+  padding-bottom: 3px;
+}
+
+/* Adoption story (design-notes 2026-11-10 §2): three beats —
+   the achievement in big numbers, the bar with its gap labelled,
+   the ask as a single clickable line. */
+.mileage {
+  background: var(--header-tint);
+  border: 1px solid #b9cba5;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+}
+.adopt-headline { margin: 0 0 8px; font-size: 15px; font-weight: 650; }
+.adopt-big {
+  font-size: 28px;
+  font-weight: 750;
+  color: var(--adopted-deep);
+  letter-spacing: -0.01em;
+}
+.adopt-of { font-size: 13px; font-weight: 400; color: var(--ink-soft); }
+
+.adopt-bar {
+  display: flex;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #b9cba5;
+}
+.adopt-gap-seg {
+  flex: 0 0 4%;
+  min-width: 14px;
+  background: repeating-linear-gradient(45deg,
+    var(--gap) 0 4px, #ffffff 4px 6px, var(--gap) 6px 10px);
+}
+.adopt-fill-seg { flex: 1 1 auto; background: var(--adopted); }
+
+/* The ask: annotation + line as one unstyled button (§2.4). */
+.gap-story {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0 4px;
+  margin: 0 -4px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.gap-story:hover { background: #fdf0ec; }
+.gap-annot {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #b2182b;
+  margin-top: 2px;
+}
+.gap-caret {
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 1px 0 2px 4px;
+  background: #b2182b;
+  transform: rotate(45deg);
+}
+.gap-ask {
+  display: block;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-top: 6px;
+}
+.gap-ask strong { color: #b2182b; }
+
+/* Mini-legend: five always-visible swatches under the story box,
+   behind a hairline — the story is the story, the legend is
+   apparatus (design-notes §2.2). */
+#mini-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #b9cba5;
+  font-size: 11.5px;
+  color: var(--ink);
+}
+#mini-legend .ml-item { display: inline-flex; align-items: center; gap: 5px; }
+#mini-legend .ml-line {
+  display: inline-block; width: 18px; height: 0;
+  border-top: 4px solid #888;
+}
+#mini-legend .ml-line.dashed { border-top-style: dashed; }
+#mini-legend .ml-bar {
+  display: inline-block; width: 4px; height: 13px; background: var(--trail);
+}
+
+/* ---------------------------------------------------------- layers */
+
+/* Whole-row click target (Paul, Nov 16, 2026 — the older
+   volunteers need a big target): the group and sub-group
+   headings ARE the toggle, not just the arrow — clicking
+   anywhere on the heading row opens or closes the group.
+   The arrow is a visual indicator inside the row. */
+.tog-group {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 10px 0 2px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.tog-group:first-child { margin-top: 2px; }
+.tog-group:hover,
+.tog-subgroup:hover { background: var(--paper-hover); }
+/* Pull-down groups (Paul, Nov 13, 2026 — The trail, Land
+   ownership) and sub-groups (Timber sales under The land):
+   the heading carries a disclosure; the body hides until
+   opened. The sub-group heading is the same voice, smaller
+   and indented, so it reads as belonging to its group. */
+.tog-group-body.collapsed,
+.tog-subgroup-body.collapsed { display: none; }
+.tog-subgroup {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 8px 0 2px 12px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.tog-subgroup-body label { padding-left: 12px; }
+#layer-toggles label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  padding: 5px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#layer-toggles label:hover { background: var(--paper-hover); }
+#layer-toggles input { accent-color: var(--trail); margin: 0; }
+#layer-toggles label.disabled { color: var(--ink-soft); cursor: default; }
+.tog-swatch-line {
+  flex: 0 0 auto;
+  display: inline-block; width: 16px; height: 0;
+  border-top: 4px solid #888;
+}
+.tog-swatch-line.dashed { border-top-style: dashed; }
+/* Every swatch occupies the same 16px slot (glyph + side
+   margins), so the layer labels start on one vertical line.
+   The line swatch is 16px wide; the narrower glyphs are
+   centred in the slot by their margins. */
+.tog-swatch-bar {
+  flex: 0 0 auto;
+  display: inline-block; width: 4px; height: 13px; margin: 0 6px;
+}
+.tog-swatch-pin {
+  flex: 0 0 auto;
+  display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid #fff; box-shadow: 0 0 2px #333; margin: 0 1px;
+}
+/* Public water access swatch: the DNR boat-ramp icon itself,
+   shown in the layer toggle and the legend so the panel key
+   matches the marker on the map. Occupies the same 16px slot
+   as the other swatches. */
+.tog-swatch-icon {
+  flex: 0 0 auto;
+  display: inline-block; width: 16px; height: 16px;
+  border-radius: 3px;
+  box-shadow: 0 0 2px rgba(28, 42, 30, 0.5);
+  margin: 0;
+  vertical-align: middle;
+}
+/* Public water access markers on the map: the brown-square
+   icon already carries its own white border; a soft shadow
+   lifts it off the basemap so it reads at 15px. */
+.boat-ramp-marker {
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(28, 42, 30, 0.5);
+}
+.tog-swatch-fill {
+  flex: 0 0 auto;
+  display: inline-block; width: 14px; height: 10px;
+  border: 1px solid #7a744f; margin: 0;
+}
+.tog-swatch-alert {
+  flex: 0 0 auto;
+  display: inline-block; width: 9px; height: 9px;
+  transform: rotate(45deg);
+  border: 1.5px solid #fff; box-shadow: 0 0 2px #333; margin: 0 2px;
+}
+.tog-swatch-chapter {
+  flex: 0 0 auto;
+  display: inline-block; width: 11px; height: 11px;
+  border-radius: 3px;
+  border: 1.5px solid #fff; box-shadow: 0 0 2px #333; margin: 0 1px;
+}
+.tog-suffix { color: var(--ink-soft); font-size: 0.8rem; }
+.tog-error {
+  color: #b2182b;
+  font-size: 11.5px;
+  padding: 0 4px 4px 26px;
+}
+/* Timber key under the Planned toggle (Paul, Nov 16, 2026):
+   fill = timing only. Same left offset as the
+   error line, so the key sits under the toggle's label text. */
+.tog-timber-key {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  padding: 2px 4px 6px 26px;
+  line-height: 1.6;
+}
+.tog-timber-key-title { font-weight: 600; color: var(--ink); }
+.tog-timber-key-row .tog-swatch-fill {
+  margin-right: 5px;
+  vertical-align: -1px;
+}
+/* S5 Winter toggle (snowmobile season) under the layer list. */
+.winter-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  padding: 6px 4px 0;
+  cursor: pointer;
+}
+.winter-row input { accent-color: var(--trail); margin: 2px 0 0; }
+
+.status { font-size: 0.8rem; color: var(--ink-soft); min-height: 1em; }
+/* The load-status line is empty most of the time; hide it then
+   so it does not hold open a gap above the footer. It reappears
+   whenever a status message is set. */
+#load-status:empty { display: none; }
+
+/* ---------------------------------------------------------- Find */
+
+#gazetteer { position: relative; }
+#gaz-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 9px;
+  font-size: 0.9rem;
+  border: 1px solid #a89a5b;
+  border-radius: 14px;
+  background: #fff;
+}
+#gaz-search:focus {
+  outline: 2px solid var(--trail);
+  outline-offset: 1px;
+}
+.gaz-hint {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin: 5px 2px 0;
+}
+#gaz-results {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  max-height: 340px;
+  overflow-y: auto;
+  z-index: 1100;
+}
+.gaz-result {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eee7d2;
+  padding: 6px 9px;
+  font-size: 0.87rem;
+  cursor: pointer;
+}
+.gaz-result:last-child { border-bottom: none; }
+.gaz-result:hover { background: #f3efdd; }
+.gaz-result.active {
+  background: #f3efdd;
+  outline: 2px solid var(--trail);
+  outline-offset: -2px;
+}
+.gaz-name {
+  display: flex; align-items: center; gap: 7px;
+  font-weight: 600;
+}
+.gaz-dot {
+  flex: 0 0 auto;
+  width: 8px; height: 8px; border-radius: 50%; background: #888;
+}
+.gaz-sub {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  margin: 1px 0 0 15px;
+}
+.gaz-nomatch {
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+.gaz-footer {
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  background: var(--paper);
+}
+
+/* "What's here" contents block (pop-up spec §1.6): always
+   visible, kinds in action order, every name a door. */
+.gaz-contents { font-size: 0.83rem; }
+.gaz-contents .gc-row {
+  display: flex; align-items: baseline; gap: 6px; margin: 3px 0;
+}
+.gaz-contents .gc-kind { font-weight: 600; white-space: nowrap; }
+.gaz-contents .gc-names { color: var(--ink-soft); font-size: 13px; }
+.gaz-contents .gc-name {
+  background: none; border: none; padding: 0;
+  font: inherit; color: var(--ink); cursor: pointer;
+  text-align: left;
+}
+.gaz-contents .gc-name:hover { text-decoration: underline; }
+.gaz-contents .gc-name:focus-visible {
+  color: var(--trail-deep); outline: none;
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------- inspector
+   The section record's fixed home (UX-REVIEW Part 1), wearing the
+   record-sheet visual form (DESIGN-REVIEW §4) at panel width. */
+
+#inspector { margin-top: 12px; }
+#inspector:empty { display: none; }
+#inspector:focus { outline: none; }
+#inspector:focus-visible {
+  outline: 2px solid var(--trail);
+  outline-offset: 2px;
+}
+
+.insp-empty {
+  border: 1px dashed var(--paper-line);
+  border-radius: 8px;
+  padding: 9px 11px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  background: #fff;
+}
+.insp-gap-callout {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-top: 8px;
+  background: #fdf0ec;
+  border: 1px solid #eec5bb;
+  border-radius: 6px;
+  padding: 6px 9px;
+  font-size: 0.85rem;
+  color: #8f1d10;
+  cursor: pointer;
+}
+.insp-gap-callout:hover { background: #fbe4dc; }
+
+.insp-sheet {
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-left: 4px solid var(--adopted);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(28, 42, 30, 0.18);
+  overflow: hidden;
+}
+.insp-sheet.is-gap { border-left-color: var(--gap); }
+.insp-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--header-tint);
+  padding: 8px 10px;
+}
+.insp-title { font-size: 18px; font-weight: 650; line-height: 1.2; }
+.insp-code {
+  font-size: 10.5px;
+  font-weight: 700;
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.insp-pill {
+  margin-left: auto;
+}
+/* Shared status-pill voice (Nov 11 hover-chip spec §2.3): the
+   inspector's pill and the hover chip's pill are one vocabulary —
+   the visual properties live here so the two surfaces can never
+   drift; .insp-pill adds only its layout margin. */
+.insp-pill, .status-pill {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  padding: 2px 9px;
+  white-space: nowrap;
+}
+.status-pill { flex: 0 0 auto; }
+.insp-pill.adopted, .status-pill.adopted {
+  background: var(--adopted); color: #fff;
+}
+.insp-pill.adopted.soft, .status-pill.adopted.soft {
+  background: #e6f4ea; color: var(--trail-deep);
+  border: 1px solid #a9c295;
+}
+.insp-pill.unadopted, .status-pill.unadopted {
+  background: var(--gap); color: #fff;
+}
+/* Help requested — the ask band's colours (Nov 10 §1.5): a
+   bordered invitation, red spent on the words, never a fill. */
+.status-pill.help {
+  background: #fdf0ec; color: #b2182b;
+  border: 1px solid #eec5bb;
+}
+.insp-close {
+  flex: 0 0 auto;
+  width: 28px; height: 28px;
+  border: none;
+  background: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 6px;
+}
+.insp-close:hover { background: var(--paper-hover); color: var(--ink); }
+
+.insp-body { padding: 10px 12px 12px; }
+.insp-caption {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin: 0 0 10px;
+}
+/* Ruled blocks (§6): the body is a sequence of blocks separated
+   by the hairline, not floating margins. */
+.insp-block {
+  border-top: 1px solid #eee7d2;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+.insp-block-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+/* Action row (§1.2/§6): paper ground under the header band, one
+   primary button, Prev/Next as a segmented pair. */
+.insp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  background: var(--paper);
+  padding: 7px 11px;
+  border-bottom: 1px solid #eee7d2;
+}
+.insp-actions button {
+  background: var(--paper);
+  border: 1px solid #a89a5b;
+  border-radius: 14px;
+  padding: 4px 12px;
+  font-size: 0.83rem;
+  cursor: pointer;
+}
+.insp-actions button:hover { background: var(--paper-hover); }
+.insp-actions button:disabled { opacity: 0.45; cursor: default; }
+.insp-actions button.primary {
+  background: var(--trail-deep);
+  border-color: var(--trail-deep);
+  color: #fff;
+}
+.insp-actions button.primary:hover { background: var(--trail-deep); }
+.insp-walk { display: inline-flex; }
+.insp-walk button { border-radius: 0; }
+.insp-walk button:first-child {
+  border-radius: 14px 0 0 14px;
+}
+.insp-walk button:last-child {
+  border-radius: 0 14px 14px 0;
+  border-left: none;
+}
+.insp-keystrip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 12px;
+  margin-bottom: 10px;
+}
+.insp-keystrip .ks-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+.insp-keystrip .ks-value { font-size: 14px; font-weight: 650; }
+.insp-keystrip .ks-value .muted {
+  font-weight: 400; color: var(--ink-soft); font-size: 11.5px;
+}
+.insp-crew {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin: -4px 0 10px;
+}
+.insp-crew .crew-names { color: var(--ink); }
+/* Ask band (§1.5): a bordered invitation; red on the label only,
+   the tracker value verbatim beneath it. */
+.insp-ask {
+  border: 1px solid #eec5bb;
+  background: #fdf0ec;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin: 0 0 10px;
+}
+.insp-ask .ask-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #b2182b;
+  margin-bottom: 3px;
+}
+.insp-ask .ask-value { font-size: 13.5px; font-weight: 650; }
+.insp-ask .ask-value.prose {
+  font-size: 13px; font-weight: 400; line-height: 1.45;
+}
+.insp-ask .ask-copy {
+  background: none; border: none; padding: 0;
+  margin-top: 6px;
+  color: var(--trail-deep); font-size: 12.5px; font-weight: 600;
+  cursor: pointer;
+}
+.insp-ask .ask-copy:hover { text-decoration: underline; }
+/* Getting in (§1.4/§6). */
+.insp-access {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.insp-access .acc-cell {
+  background: var(--paper);
+  border-radius: 6px;
+  padding: 7px 9px;
+}
+.insp-access .acc-end {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+.insp-access .acc-val { font-size: 12.5px; font-weight: 550; }
+.insp-access-wrap .acc-note {
+  font-size: 12px; font-weight: 600; color: var(--ink);
+  margin: 6px 0 0;
+}
+.insp-standing {
+  border-left: 3px solid var(--gap);
+  background: #fdf0ec;
+  border-radius: 0 4px 4px 0;
+  padding: 6px 9px;
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+.insp-desc { font-size: 13px; line-height: 1.45; margin: 10px 0 8px; }
+.insp-ask-print, .insp-print-note { display: none; }
+.insp-desc.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.insp-more {
+  background: none; border: none; padding: 0;
+  color: var(--trail-deep); font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  margin: -4px 0 8px;
+  display: block;
+}
+.insp-details {
+  border-top: 1px solid #eee7d2;
+  padding-top: 6px;
+  margin-top: 2px;
+}
+.insp-details summary {
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 3px 0;
+}
+.insp-rows { margin-top: 4px; }
+.insp-row {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 8px;
+  padding: 3px 0;
+  border-bottom: 1px solid #f3efe0;
+  font-size: 12.5px;
+}
+.insp-row:last-child { border-bottom: none; }
+.insp-row .k {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  padding-top: 2px;
+}
+.insp-prov {
+  font-size: 10.5px;
+  font-style: italic;
+  color: var(--ink-soft);
+  padding: 0 12px 10px;
+}
+
+/* Label highlight while its section's record is up (DESIGN §4). */
+.leaflet-tooltip.section-name-label.label-active {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------- legend */
+
+#legend, #legend-print-body { font-size: 0.85rem; }
+#legend .row, #legend-print-body .row {
+  display: flex; align-items: center; gap: 8px; padding: 2px 0;
+}
+#legend .swatch, #legend-print-body .swatch {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 0;
+  border-top: 4px solid #888;
+}
+#legend .swatch.dashed, #legend-print-body .swatch.dashed {
+  border-top-style: dashed;
+}
+#legend .swatch.bar, #legend-print-body .swatch.bar {
+  width: 4px;
+  height: 14px;
+  border-top: none;
+  margin: 0 13px;
+}
+#legend .swatch.bar.wide, #legend-print-body .swatch.bar.wide {
+  width: 6px; height: 16px; margin: 0 12px;
+}
+#legend .swatch.fill, #legend-print-body .swatch.fill {
+  height: 12px;
+  border: 1px solid #7a744f;
+}
+#legend .swatch.pin, #legend-print-body .swatch.pin {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px #333;
+  margin: 0 9px;
+}
+#legend .swatch.alert, #legend-print-body .swatch.alert {
+  width: 11px;
+  height: 11px;
+  border-top: none;
+  transform: rotate(45deg);
+  background: var(--gap);
+  border: 1.5px solid #fff;
+  box-shadow: 0 0 2px #333;
+  margin: 0 9.5px;
+}
+#legend .swatch.chapterdisc, #legend-print-body .swatch.chapterdisc {
+  width: 15px;
+  height: 15px;
+  border-top: none;
+  border-radius: 4px;
+  background: var(--trail-deep);
+  border: 1.5px solid #fff;
+  box-shadow: 0 0 2px #333;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  margin: 0 7.5px;
+  padding: 0;
+}
+#legend .swatch.chapterdisc.closed,
+#legend-print-body .swatch.chapterdisc.closed {
+  background: #6e6e66;
+  border-color: var(--gap);
+}
+/* Numeral swatches (mileage rows): the legend shows the label
+   typography itself — a bare slate number. */
+#legend .swatch.num, #legend-print-body .swatch.num {
+  width: 30px;
+  height: auto;
+  border-top: none;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--tick, #37474f);
+}
+
+.credits { font-size: 0.8rem; padding-left: 18px; margin: 4px 0; }
+.credits li { margin-bottom: 4px; }
+.privacy { font-size: 0.8rem; font-style: italic; color: #4c5a4e; }
+
+/* Screen-only/print-only scaffolding. */
+#legend-print, .print-header { display: none; }
+
+/* Corner UI: sources + legend behind buttons over the map's
+   bottom-left corner, stacked above the scale control (bottom: 42px
+   clears it); the Leaflet attribution at bottom-right is untouched. */
+#corner-ui {
+  position: absolute;
+  left: 10px;
+  bottom: 42px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.corner-card {
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  padding: 10px 12px;
+  width: 300px;
+  max-width: 82vw;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+.corner-card h2 {
+  font-size: 0.95rem;
+  margin: 0 0 6px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #d8d2bd;
+}
+#corner-buttons { display: flex; }
+#corner-buttons button {
+  background: var(--paper);
+  border: 1px solid #a89a5b;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+#corner-buttons button:first-child {
+  border-radius: 14px 0 0 14px;
+}
+#corner-buttons button:last-child {
+  border-radius: 0 14px 14px 0;
+  margin-left: -1px;
+}
+#corner-buttons button.active {
+  background: var(--trail-deep);
+  color: #fff;
+}
+
+/* Print button + dialog (Paul, Nov 17, 2026): a printer icon next to
+   the Copy link button in the panel, in the Present button's idiom
+   (30px square, same border). It opens a dialog that prints ONE map —
+   a drawn box or the current window. No layer list here; it prints
+   the layers ticked in the panel. */
+.panel-actions {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0 0;
+}
+.panel-actions .copy-link-btn {
+  flex: 1 1 auto;
+  width: auto;
+  margin: 0;
+}
+.print-btn {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.print-btn:hover { background: var(--paper-hover); }
+#print-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(15, 23, 42, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+}
+#print-dialog-backdrop[hidden] { display: none; }
+#print-dialog {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  padding: 14px 16px;
+  width: 320px;
+  max-width: 88vw;
+}
+#print-dialog h2 {
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+#print-close-x {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+}
+.print-choice {
+  display: block;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+/* Print paper size / orientation / DPI (Paul, Nov 17, 2026): plain
+   controls in the dialog's own idiom. */
+.print-field {
+  display: block;
+  font-size: 0.92rem;
+  margin-top: 10px;
+}
+.print-field select {
+  display: block;
+  width: 100%;
+  margin-top: 3px;
+  padding: 5px 6px;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+}
+.print-choice-inline {
+  display: inline-block;
+  font-size: 0.92rem;
+  margin: 3px 12px 0 0;
+  cursor: pointer;
+}
+.print-note {
+  font-size: 0.82rem;
+  color: #475569;
+  margin: 8px 0 0;
+}
+/* Simple map (Paul, Nov 17, 2026): the switch + its short
+   checklist of what the black linework includes. An item whose
+   data file is missing is greyed out (see print-dialog.js). */
+.print-simple-switch { margin-top: 10px; }
+#print-simple-list { margin: 2px 0 0 22px; }
+.print-simple-item.unavailable { color: #94a3b8; }
+.print-status {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin: 8px 0 0;
+  min-height: 1.2em;
+}
+.print-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.print-actions button {
+  padding: 6px 12px;
+  border: 1px solid #64748b;
+  border-radius: 4px;
+  background: #fff;
+  color: #1e293b;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+.print-actions button.print-go {
+  font-weight: 600;
+  background: var(--trail-deep);
+  border-color: var(--trail-deep);
+  color: #fff;
+}
+.print-actions button:disabled { opacity: 0.45; cursor: default; }
+.print-redraw {
+  display: block;
+  margin: 8px 0 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #1d4ed8;
+  font-size: 0.82rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.print-redraw[hidden] { display: none; }
+
+/* Map-face text (divIcons, non-interactive): terminus names and the
+   gap's name label. (Section names are Leaflet tooltips, styled
+   separately below.) Children are absolutely positioned on the 0x0
+   icon anchor. */
+.map-label { background: none; border: none; }
+.map-label span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  font-weight: 600;
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 4px #fff;
+}
+/* Section names: permanent Leaflet tooltips placed by
+   layoutSectionLabels() so they never touch the line (app.js:
+   sectionLabelPlacement). Bare haloed text, and CLICKABLE since
+   v6 — clicking the name selects the section, same as the line;
+   the halo is the panel's paper, not clinical white (DESIGN §3). */
+.leaflet-tooltip.section-name-label {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  pointer-events: auto;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--adopted-deep);
+  text-shadow: 0 0 3px rgba(247, 245, 238, 0.92),
+    0 0 3px rgba(247, 245, 238, 0.92),
+    0 0 4px rgba(247, 245, 238, 0.92);
+  padding: 0;
+}
+.leaflet-tooltip.section-name-label::before { display: none; }
+.terminus-label span {
+  transform: translate(-50%, -260%);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--trail-deep);
+}
+/* The gap's own name on the map (DESIGN D4), in the gap's voice. */
+.gap-label span {
+  transform: translate(-50%, -160%);
+  font-size: 12px;
+  font-weight: 700;
+  color: #b2182b;
+  text-shadow: 0 0 3px rgba(247, 245, 238, 0.92),
+    0 0 3px rgba(247, 245, 238, 0.92),
+    0 0 4px rgba(247, 245, 238, 0.92);
+}
+/* S2: at Z2+ the gap label becomes a Carsonite sign chip — the
+   small post-mounted marker of the trail itself: paper fill, a
+   1 px deep-red border, a 4 px radius. The sign hangs BELOW the
+   line (a Carsonite is a post, not a banner): the west terminus
+   label lives above the line at the gap's own west end, and at
+   Z2 zooms the two would otherwise collide — termini never hide,
+   so the sign takes the other side. */
+body.gap-chip .gap-label span {
+  transform: translate(-50%, 55%);
+  background: var(--paper);
+  border: 1px solid #b2182b;
+  border-radius: 4px;
+  padding: 2px 7px;
+  text-shadow: none;
+  box-shadow: 0 1px 3px rgba(28, 42, 30, 0.3);
+}
+
+/* S1 chainage numerals: slate figures sitting ON the line,
+   centred on their point. The 5-mile points are print-only —
+   hidden on screen, shown by the print block below. */
+.chainage-label span {
+  transform: translate(-50%, -50%);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--tick);
+  text-shadow: 0 0 3px rgba(247, 245, 238, 0.95),
+    0 0 3px rgba(247, 245, 238, 0.95),
+    0 0 4px rgba(247, 245, 238, 0.95);
+}
+.chainage-label span.five { display: none; }
+
+/* M2 state-mile labels: bare numbers above their discs, in the
+   soft ink, haloed with the map's paper. */
+.leaflet-tooltip.mile-label {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  pointer-events: none;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-shadow: 0 0 3px rgba(247, 245, 238, 0.95),
+    0 0 3px rgba(247, 245, 238, 0.95),
+    0 0 4px rgba(247, 245, 238, 0.95);
+  padding: 0;
+}
+.leaflet-tooltip.mile-label::before { display: none; }
+
+/* S4 Places discs: 15 px paper discs with a slate ring and a
+   single letter (P/C/W/S). */
+.place-disc-wrap { background: none; border: none; }
+.place-disc {
+  display: block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.5px solid var(--tick);
+  color: var(--tick);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(28, 42, 30, 0.35);
+}
+
+/* Street View markers: 19 px Google-blue discs with a white
+   camera — the photo was taken from here. Distinct from the
+   paper Places discs, the deep-green chapter discs and the
+   orange asset pins. */
+.sv-disc-wrap { background: none; border: none; }
+.sv-disc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #4285f4;
+  border: 1.5px solid #fff;
+  box-shadow: 0 1px 3px rgba(28, 42, 30, 0.45);
+}
+.sv-disc svg { display: block; }
+
+/* Trail alert markers: a red warning diamond in the gap red —
+   deliberately unlike the round Places letter discs and the
+   orange asset pins. The glyph is counter-rotated upright. */
+.alert-marker-wrap { background: none; border: none; }
+.alert-marker {
+  display: block;
+  width: 16px;
+  height: 16px;
+  transform: rotate(45deg);
+  background: var(--gap);
+  border: 1.5px solid #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(28, 42, 30, 0.45);
+}
+.alert-glyph {
+  display: block;
+  transform: rotate(-45deg);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* NCTA map-sheet number labels: a small parchment tag at each
+   sheet's centre — the locator face of the sheets layer, visible
+   at the zooms where the sheet images themselves are gated off. */
+.sheet-label-wrap { background: none; border: none; }
+.sheet-label {
+  display: block;
+  width: 64px;
+  text-align: center;
+  background: rgba(253, 246, 216, 0.92);
+  border: 1px solid #8a6d1a;
+  border-radius: 3px;
+  color: #5c4a10;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  box-shadow: 0 1px 2px rgba(28, 42, 30, 0.3);
+}
+
+/* Reservation label: the same tag idiom as the sheet labels, in
+   the reservation violet — one label at the polygon's computed
+   interior point, visible whenever the layer is on. */
+.reservation-label-wrap { background: none; border: none; }
+.reservation-label {
+  display: block;
+  width: 170px;
+  text-align: center;
+  background: rgba(238, 236, 248, 0.92);
+  border: 1px solid #5e548e;
+  border-radius: 3px;
+  color: #3f3a6b;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.04em;
+  box-shadow: 0 1px 2px rgba(28, 42, 30, 0.3);
+}
+
+/* Chapter place markers: deep-green rounded squares with a kind
+   letter — the chapter's own family, distinct from the paper
+   Places discs, the red alert diamonds and the orange asset
+   pins. A CLOSED place greys out under a red ring with a
+   diagonal bar: unmistakably shut at a glance. */
+.chapter-disc-wrap { background: none; border: none; }
+.chapter-disc {
+  display: block;
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  background: var(--trail-deep);
+  border: 1.5px solid #fff;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 17px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(28, 42, 30, 0.45);
+}
+.chapter-disc.closed {
+  background-color: #6e6e66;
+  border-color: var(--gap);
+  background-image: linear-gradient(to top right,
+    transparent 43%, var(--gap) 46%, var(--gap) 54%, transparent 57%);
+}
+.chapter-dot {
+  display: block;
+  width: 9px;
+  height: 9px;
+  margin: 5px;
+  border-radius: 50%;
+  background: var(--trail-deep);
+  border: 1.5px solid #fff;
+  box-shadow: 0 1px 2px rgba(28, 42, 30, 0.4);
+}
+.chapter-dot.closed { background: #6e6e66; border-color: var(--gap); }
+
+/* Road-walk speed badges (Paul, Nov 18, 2026): a small white pill
+   reading like a speed-limit sign — the number with a small
+   "mph" — one per T07 western road-walk segment. */
+.speed-badge-wrap { background: none; border: none; }
+.speed-badge {
+  display: inline-block;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #fff;
+  border: 2px solid #1f2937;
+  color: #1f2937;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 17px;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(28, 42, 30, 0.45);
+}
+.speed-badge small { font-size: 8px; font-weight: 700; }
+
+/* Road-walk crash markers (Paul, Nov 18, 2026): an amber warning
+   diamond with a "!" — the High-Injury Network corridors. Amber,
+   deliberately unlike the red alert diamonds (trail alerts) and
+   the orange asset pins. */
+.crash-marker-wrap { background: none; border: none; }
+.crash-marker {
+  display: block;
+  width: 18px;
+  height: 18px;
+  transform: rotate(45deg);
+  background: #b45309;
+  border: 1.5px solid #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(28, 42, 30, 0.45);
+}
+.crash-glyph {
+  display: block;
+  transform: rotate(-45deg);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+}
+
+/* Asset-pin pictographs (Paul, Nov 12, 2026): the photo-inventory
+   pins are pictographic discs, not dots — one glyph per type, white
+   on the orange pin, so a volunteer reads what a pin IS at a
+   glance. The disc is 22 px in a 26 px icon box; a graded pin
+   wears its condition ring (good green / fair amber / poor red;
+   new / worn / replace) as a 26 px ring behind the disc, the same
+   colours CONDITION_RINGS carries in app.js. */
+.asset-pin-wrap { background: none; border: none; }
+.asset-pin, .asset-pin-ringed {
+  display: block;
+  border-radius: 50%;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(28, 42, 30, 0.45);
+}
+.asset-pin {
+  width: 22px;
+  height: 22px;
+  margin: 2px;
+  background: #e6550d;
+  border: 1.5px solid #fff;
+}
+.asset-pin-ringed { width: 26px; height: 26px; padding: 2px; }
+.asset-pin-ringed .asset-pin { margin: 0; }
+.asset-pin svg { display: block; width: 16px; height: 16px;
+  margin: 1.5px auto 0; }
+
+/* Spiderfy legs (Paul, Nov 12, 2026): the thin line from a stack's
+   anchor to each fanned pin. Drawn as a Leaflet polyline, not CSS. */
+
+/* Copy link (Paul, Nov 12, 2026): a full-width panel button under
+   the view switch, in the Present button's idiom. */
+.copy-link-btn {
+  display: block;
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 7px 4px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.copy-link-btn:hover { background: var(--paper-hover); }
+
+/* Present button (Paul, Nov 13, 2026): a small icon at the
+   panel edge, not a wide text button — it rides at the right
+   end of the masthead row, next to the panel's right edge. */
+.present-btn {
+  margin-left: auto;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.present-btn:hover { background: var(--paper-hover); }
+
+/* Hover chip (Nov 11 redesign — docs/design-notes-2026-11-11-
+   hover-chip.md): small, static, non-interactive triage card.
+   The old chip's ribbon failure was structural — max-width with
+   no floor and inline flow — so the chip now has a width floor,
+   block structure, and nowrap everywhere it matters. */
+.leaflet-tooltip.hover-chip {
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(28, 42, 30, 0.22);
+  padding: 7px 10px 8px;
+  /* width:max-content is load-bearing: Leaflet positions a
+     tooltip by setting left/top (no width), and an absolutely
+     positioned block whose containing block (the transformed
+     tooltip pane) shrink-wraps would otherwise size the chip to
+     its min-width floor regardless of content. max-content sizes
+     the chip to its widest unwrapped line, bounded by the floor
+     and ceiling either side of it. */
+  width: max-content;
+  min-width: 190px;
+  max-width: 300px;
+  white-space: normal;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink);
+  pointer-events: none;
+}
+.leaflet-tooltip.hover-chip::before { display: none; }
+.hover-chip .hc-head {
+  display: flex; align-items: baseline; gap: 8px;
+}
+.hover-chip .hc-name {
+  font-size: 14px; font-weight: 650;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.hover-chip .hc-sub {
+  display: block; margin-top: 1px;
+  font-size: 12px; color: var(--ink-soft);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.hover-chip .hc-facts { display: block; margin-top: 2px; }
+.hover-chip .hc-fact { white-space: nowrap; }
+
+/* Imagery bases: flip map-face labels to near-white with a dark
+   halo so names survive dark aerial photography (UX P5). */
+body.base-imagery .leaflet-tooltip.section-name-label {
+  color: #fdfdf8;
+  text-shadow: 0 0 3px rgba(20, 30, 20, 0.9),
+    0 0 3px rgba(20, 30, 20, 0.9), 0 0 5px rgba(20, 30, 20, 0.9);
+}
+body.base-imagery .terminus-label span,
+body.base-imagery .gap-label span {
+  color: #fdfdf8;
+  text-shadow: 0 0 3px rgba(20, 30, 20, 0.9),
+    0 0 3px rgba(20, 30, 20, 0.9), 0 0 5px rgba(20, 30, 20, 0.9);
+}
+body.base-imagery .chainage-label span,
+body.base-imagery .leaflet-tooltip.mile-label {
+  color: #fdfdf8;
+  text-shadow: 0 0 3px rgba(20, 30, 20, 0.9),
+    0 0 3px rgba(20, 30, 20, 0.9), 0 0 5px rgba(20, 30, 20, 0.9);
+}
+/* The sign chip keeps its paper face on imagery bases too. */
+body.base-imagery.gap-chip .gap-label span {
+  color: #b2182b;
+  text-shadow: none;
+}
+
+#map {
+  margin-left: 320px;
+  height: 100vh;
+}
+
+/* ---- Popups (DESIGN-REVIEW §6, redesigned Nov 19, 2026):
+   one visual language across every popup. Header = kicker +
+   title; facts = hairline table; notes = tinted callout;
+   footer = source line + "About this layer" link; actions =
+   real pill buttons. The popup is a card, not a bare Leaflet
+   box. ---- */
+.leaflet-popup-content-wrapper {
+  background: #fffefa;
+  border: 1px solid var(--paper-line);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(28, 42, 30, 0.28);
+}
+.leaflet-popup-tip { background: #fffefa; }
+.leaflet-popup-content {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 14px 16px 12px;
+}
+.leaflet-popup-content .pop-kicker {
+  margin: 0 0 2px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--trail-deep);
+}
+.leaflet-popup-content h3 {
+  margin: 0 0 8px;
+  padding-bottom: 8px;
+  font-size: 16.5px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--ink);
+  border-bottom: 1px solid var(--paper-line);
+}
+.leaflet-popup-content table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.leaflet-popup-content td {
+  padding: 5px 8px 5px 0;
+  vertical-align: top;
+}
+.leaflet-popup-content tr + tr td { border-top: 1px solid #eceadf; }
+.leaflet-popup-content td.k {
+  color: var(--ink-soft);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-top: 7px;
+  width: 34%;
+}
+.leaflet-popup-content p a {
+  color: var(--trail-deep);
+  font-weight: 600;
+}
+.leaflet-popup-content .pop-note {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  background: var(--header-tint);
+  border-left: 3px solid var(--trail);
+  border-radius: 0 6px 6px 0;
+}
+/* Treaty-history timeline in the reservation popup (Nov 21,
+   2026): a compact dated list under the boundary facts. */
+.leaflet-popup-content .pop-treaty { margin: 12px 0 0; }
+.leaflet-popup-content .pop-treaty h4 {
+  margin: 0 0 4px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.leaflet-popup-content .pop-treaty ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.leaflet-popup-content .pop-treaty li {
+  margin: 3px 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+/* Live Street View thumbnail in shoulder point popups (Paul,
+   Nov 20, 2026): the 400x300 Static API frame, scaled to the
+   popup width, with Google's attribution under it. */
+.leaflet-popup-content .pop-thumb { margin: 0 0 10px; }
+.leaflet-popup-content .pop-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+.leaflet-popup-content .pop-thumb p {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.leaflet-popup-content .pop-source {
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--paper-line);
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+.leaflet-popup-content .pop-source a {
+  color: var(--trail-deep);
+  font-weight: 600;
+}
+.leaflet-popup-content .pop-foot {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+}
+.leaflet-popup-content .pop-foot a {
+  color: var(--trail-deep);
+  font-weight: 600;
+  text-decoration: none;
+}
+.leaflet-popup-content .pop-foot a:hover { text-decoration: underline; }
+.leaflet-popup-content .pop-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--paper-line);
+}
+.leaflet-popup-content .pop-door {
+  background: var(--trail-deep);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0;
+}
+.leaflet-popup-content .pop-door:hover {
+  background: #0e3d20;
+  text-decoration: none;
+}
+.leaflet-popup-content .pop-directions,
+.leaflet-popup-content .pop-link {
+  display: inline-block;
+  border: 1px solid var(--trail-deep);
+  color: var(--trail-deep);
+  background: transparent;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 0;
+}
+.leaflet-popup-content .pop-directions:hover,
+.leaflet-popup-content .pop-link:hover {
+  background: var(--header-tint);
+  text-decoration: none;
+}
+.leaflet-popup-content .pop-classify { margin: 10px 0 0; }
+.leaflet-popup-content .pop-record-link {
+  display: inline-block;
+  border: 1px solid var(--trail-deep);
+  color: var(--trail-deep);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.leaflet-popup-content .pop-record-link:hover {
+  background: var(--header-tint);
+  text-decoration: none;
+}
+
+/* ---------------------------------------------------------- mobile */
+
+@media (max-width: 720px) {
+  #panel {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    width: auto;
+    height: 38vh;
+    max-height: 38vh;
+    border-right: none;
+    border-bottom: 1px solid var(--paper-line);
+  }
+  #map { margin-left: 0; margin-top: 38vh; height: 62dvh; }
+  .leaflet-popup-content-wrapper { max-width: calc(100vw - 32px); }
+  /* Masthead compresses, never stacks (design-notes §1.5). */
+  .masthead { padding-bottom: 6px; margin-bottom: 6px; gap: 10px; }
+  .masthead-logo { height: 32px; max-width: 96px; }
+  #panel h1 { font-size: 15px; white-space: nowrap; }
+  .masthead-desc { font-size: 10px; }
+  .adopt-big { font-size: 24px; }
+  #layer-toggles { columns: 2; }
+  #layer-toggles label { min-height: 40px; }
+  #gaz-search { font-size: 16px; }
+  /* Inspector becomes a bottom sheet when a selection exists. */
+  #inspector.has-selection {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    box-sizing: border-box;
+    max-height: 45vh;
+    overflow-y: auto;
+    z-index: 1200;
+    background: var(--paper);
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 18px rgba(28, 42, 30, 0.3);
+    margin-top: 0;
+  }
+  /* The action row stays under the thumb while the sheet's
+     record scrolls beneath it (§8); 40px targets on touch. */
+  #inspector .insp-actions {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  #inspector .insp-actions button { min-height: 40px; }
+  .insp-access { grid-template-columns: 1fr; }
+}
+
+@media (pointer: coarse) {
+  .insp-actions button { min-height: 40px; }
+}
+
+/* ---------------------------------------------------------- print
+   Recruiting handouts: panel text + legend + map, legend visible,
+   attribution kept (UX P7 / DESIGN §6). */
+
+@page { size: landscape; margin: 12mm; }
+
+@media print {
+  .leaflet-tile-pane { filter: grayscale(0.25) contrast(1.02); }
+  #panel {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    border-right: none;
+  }
+  /* Print masthead (design-notes §1.6): logo + wordmark, then the
+     existing sentence; the story box prints beneath as the
+     handout's headline. */
+  .print-header { display: block; }
+  .print-masthead { display: flex; align-items: center; gap: 4mm; }
+  .print-logo { height: 11mm; width: auto; }
+  .print-name {
+    font-size: 13pt; font-weight: 700; color: var(--trail-deep);
+    margin: 0;
+  }
+  .print-desc {
+    font-size: 8pt; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.14em; color: var(--ink-soft); margin: 1mm 0 0;
+  }
+  .print-line { font-size: 9pt; color: var(--ink-soft); margin: 2mm 0 0; }
+  .adopt-bar, .mileage { print-color-adjust: exact; }
+  /* S5: the gap's map face prints in its true colours, and the
+     chainage cadence tightens to every 5 miles on paper. (The
+     roads/access print collapse is applied in app.js — canvas
+     paths cannot be restyled from CSS.) */
+  .gap-label span { print-color-adjust: exact; }
+  .chainage-label span.five { display: block; }
+  .winter-row { display: none; }
+  .gap-story { cursor: default; }
+  .gap-story:hover { background: none; }
+  #legend-print { display: block; margin-top: 10px; }
+  #map {
+    margin-left: 0;
+    margin-top: 0;
+    width: 100%;
+    height: 60vh;
+    page-break-before: always;
+  }
+  /* Hide controls selectively — the attribution must stay. */
+  .leaflet-control-layers,
+  .leaflet-control-zoom,
+  .leaflet-control-scale { display: none; }
+  .leaflet-control-attribution {
+    display: block;
+    background: rgba(255, 255, 255, 0.8);
+  }
+  #layer-toggles, .tog-group { display: none; }
+  #corner-ui { display: none; }
+  #gazetteer, .gaz-hint { display: none; }
+  #inspector { page-break-before: always; }
+  #inspector.has-selection .insp-sheet {
+    box-shadow: none;
+    max-width: 560px;
+  }
+  /* The record as a handout (pop-up spec §8): screen furniture
+     never prints; the description prints in full; the fold is
+     replaced by one line pointing at the tracker. */
+  .insp-actions, .insp-close, .insp-more { display: none; }
+  .insp-head, .insp-pill { print-color-adjust: exact; }
+  .insp-desc.clamped {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+  .insp-details { display: none; }
+  .insp-print-note {
+    display: block;
+    font-size: 10.5px; font-style: italic; color: var(--ink-soft);
+    margin: 10px 0 0;
+  }
+  .insp-ask-print {
+    display: block;
+    font-size: 13px; font-weight: 650;
+    margin: 0 0 8px;
+  }
+  .gaz-contents .gc-name {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  /* Interactive card actions print as plain text, like the
+     What's-here names above. */
+  .leaflet-popup-content .pop-directions {
+    color: var(--ink);
+    text-decoration: none;
+  }
+}
+
+/* ============================================================
+   Design review (Nov 11, 2026) — R1–R7
+   The panel is organized by task, not by source; the work
+   list leads; the map has three views and a meeting-room mode.
+   ============================================================ */
+
+/* --- View switch (R6): Work / Explore / Visit, first thing
+   under the title. A preset, not a second map. --- */
+.view-switch {
+  display: flex;
+  gap: 4px;
+  margin: 12px 0 4px;
+}
+#view-switch button {
+  flex: 1;
+  padding: 7px 4px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#view-switch button:hover { background: var(--paper-hover); }
+#view-switch button.on {
+  background: var(--trail-deep);
+  color: #fff;
+  border-color: var(--trail-deep);
+}
+
+/* --- Work list (R1): the panel's front door. One line per
+   job; the five blowdowns group into one line. The list is
+   text — photos load only on click. --- */
+#work-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#work-list li { margin: 0; }
+#work-list button {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font: inherit;
+  padding: 6px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#work-list button:hover { background: var(--paper-hover); }
+#work-list .sev {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  transform: rotate(45deg);
+  margin-top: 5px;
+  border: 1.5px solid #fff;
+  box-shadow: 0 0 2px #333;
+}
+#work-list .sev.soon { background: var(--gap); }
+#work-list .sev.wait { background: #e08214; }
+#work-list .w-what { font-weight: 650; }
+#work-list .w-where {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+#work-list .w-fix {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--ink);
+  margin-top: 1px;
+}
+#work-more {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 4px 2px 0;
+}
+#work-more a { color: var(--trail-deep); }
+.work-error { color: #b2182b; font-size: 0.85rem; }
+
+/* --- Adoption line (R3): one compact line — the achievement
+   and the one recruiting line, no second story. --- */
+.adopt-line {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  margin: 10px 0 0;
+}
+.adopt-line strong { color: var(--adopted-deep); }
+.adopt-line .adopt-gap { color: #b2182b; font-weight: 650; }
+.adopt-line button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--trail-deep);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* The adoption bar: the 4% gap at the west end, hatched red
+   on the adopted green (the old mileage box's bar, kept). */
+.adopt-line .bar {
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--adopted);
+  margin: 4px 0;
+}
+.adopt-line .bar i {
+  display: block;
+  width: 4%;
+  height: 100%;
+  background: repeating-linear-gradient(45deg,
+    var(--gap) 0 4px, #ffffff 4px 6px, var(--gap) 6px 10px);
+}
+
+/* --- Basemap section (R2): every base listed, none behind a
+   disclosure. All the buttons are the same size (Paul, Nov 13,
+   2026): a two-column grid with equal rows, so a long label
+   cannot make its button taller or wider than the rest.
+   Streets and Trails sit right after Topo in the order — they
+   are its sub-choices — but they are full-size buttons like
+   every other base. --- */
+/* Basemap pull-down (Paul, Nov 13, 2026): the heading is a
+   flex row so the disclosure button rides at the right edge,
+   like the layer-group pull-downs. The collapsed rule needs
+   the ID — #background-choices' own display:grid outranks the
+   generic .sub-toggles.collapsed rule. The heading matches
+   the group headings (.tog-group: 11px, uppercase, grey) —
+   it is an h2, so #panel h2 still gives it the bottom rule,
+   which is the single line above the footer. The double-ID
+   selector is needed: #panel h2 outranks a lone ID. */
+#panel #basemap-head {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 10px 0 2px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+#panel #basemap-head:hover { background: var(--paper-hover); }
+#background-choices.collapsed { display: none; }
+#background-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr;
+  gap: 6px;
+  margin: 4px 0 6px;
+}
+.bg-choice {
+  display: grid;
+  align-content: center;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 0.88rem;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.bg-choice:hover { background: var(--paper-hover); }
+.bg-choice.on {
+  background: var(--trail-deep);
+  color: #fff;
+  border-color: var(--trail-deep);
+}
+.bg-choice .bg-sub {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+.bg-choice.on .bg-sub { color: #d8e4c8; }
+/* White — no basemap (Paul, Nov 17, 2026): with no tile layer the
+   map pane shows the container background — make it white, not
+   Leaflet's grey, so the map reads as a blank page. */
+body.base-white .leaflet-container { background: #ffffff; }
+/* A sub-choice (Streets, Trails under Topo) is a full-size
+   button like every other base — same width, same height. The
+   class stays so the code can tell them apart; it changes
+   nothing visual. */
+.bg-sub-choice {}
+
+/* Aerial-by-year menu (Paul, Nov 13, 2026): one dropdown for all
+   the year aerials instead of a button per year. Full-width card
+   (spans both grid columns), same border and type as the base
+   buttons, and it sits at the bottom of the Basemap section. */
+.bg-year-wrap {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 8px;
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+}
+.bg-year-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.bg-year-note {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+.bg-year-select {
+  width: 100%;
+  padding: 4px 6px;
+  font: inherit;
+  font-size: 0.88rem;
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* --- Maintenance markers (R1): red/amber diamonds, the same
+   vocabulary as the work list. --- */
+.maint-marker-wrap { background: none; border: none; }
+.maint-marker {
+  display: block;
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px #333;
+  margin: 3px;
+}
+.maint-marker.soon { background: var(--gap); }
+.maint-marker.wait { background: #e08214; }
+
+/* --- Maintenance popup (R1): the fix first, in plain
+   language; the asset pin is one click away. --- */
+.maint-fix { font-size: 0.95rem; margin: 4px 0; }
+.maint-where {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 2px 0;
+}
+.maint-asset { font-size: 0.85rem; margin: 6px 0 0; }
+.maint-asset-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--trail-deep);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.maint-photos {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin: 2px 0 0;
+}
+
+/* --- Asset popup, plain language (R5): the type is the
+   headline, the serial is the small code beneath it; the
+   condition carries its gloss; the maintenance line sits at
+   the top in red. --- */
+.leaflet-popup-content .pop-sub {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 2px 0 4px;
+}
+.leaflet-popup-content .pop-maint {
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: #b2182b;
+  background: #fdf0ec;
+  border: 1px solid #e8b4ac;
+  border-radius: 4px;
+  padding: 5px 8px;
+  margin: 6px 0;
+}
+.pop-face-label {
+  font-size: 12px;
+  color: #555;
+  margin: 0 0 4px;
+}
+.pop-photo-date {
+  font-size: 12px;
+  color: #555;
+  margin: 0 0 4px;
+}
+.pop-face-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 6px;
+}
+.pop-face, .pop-faces-all {
+  padding: 5px 11px;
+  border: 1px solid var(--paper-line);
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.pop-face.active {
+  background: var(--trail-deep);
+  color: #fff;
+  border-color: var(--trail-deep);
+  font-weight: 700;
+}
+.pop-face-grid {
+  display: none;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0 2px;
+}
+.pop-face-grid img {
+  flex: 1 1 30%;
+  max-width: 32%;
+  display: block;
+}
+
+/* --- Popup classification form (Paul, Nov 12, 2026): type,
+   condition, photographer and note, saved through the itm-save
+   Worker. Labels stack; the Save button matches the face pills. --- */
+.leaflet-popup-content .pop-cls {
+  border-top: 1px solid var(--paper-line);
+  margin: 12px 0 2px;
+  padding-top: 10px;
+}
+.leaflet-popup-content .pop-cls h4 {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+.leaflet-popup-content .pop-cls label {
+  display: block;
+  font-size: 13px;
+  margin: 6px 0 2px;
+}
+.leaflet-popup-content .pop-cls select,
+.leaflet-popup-content .pop-cls input[type="text"] {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid var(--paper-line);
+  border-radius: 6px;
+  background: #fff;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.leaflet-popup-content .pop-cls input[type="text"] { width: 100%; }
+.pop-cls-save {
+  padding: 7px 14px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 999px;
+  background: var(--trail-deep);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+.pop-cls-save:disabled { opacity: 0.6; cursor: default; }
+.leaflet-popup-content .pop-cls-msg {
+  font-size: 0.85rem;
+  color: #1a9850;
+  margin-top: 4px;
+  min-height: 1em;
+}
+.leaflet-popup-content .pop-cls-msg.pop-cls-err { color: #b2182b; }
+
+/* --- Asset popup redesign (Paul, Nov 13, 2026): the header stays
+   put while the popup scrolls (projection: the title never scrolls
+   away); the condition is a chip in the header; photos are
+   click-to-enlarge; the record link and the Save button read as
+   real actions. --- */
+.leaflet-popup-content .pop-head {
+  margin: -14px -16px 10px;
+  padding: 10px 16px 8px;
+  background: #fff;
+  border-bottom: 1px solid var(--paper-line);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.leaflet-popup-content .pop-head h3 {
+  margin: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.leaflet-popup-content .pop-head .pop-sub { margin: 2px 0 0; }
+/* The body scrolls inside the popup while the header stays put
+   (Paul, Nov 13, 2026). The cap keeps the whole popup under
+   Leaflet's own 70 vh maxHeight, so no second scrollbar appears. */
+.leaflet-popup-content .pop-body {
+  max-height: calc(70vh - 140px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.pop-head-text { min-width: 0; }
+.pop-cond-chip {
+  flex: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 2px solid #555;
+  border-radius: 20px;
+  padding: 3px 10px;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+.leaflet-popup-content .pop-photo {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 6px 0 2px;
+  border-radius: 6px;
+  cursor: zoom-in;
+}
+.leaflet-popup-content .pop-photo:focus-visible {
+  outline: 3px solid var(--trail-deep);
+  outline-offset: 2px;
+}
+.leaflet-popup-content .pop-face-grid .pop-photo {
+  max-width: 32%;
+  margin: 0;
+  flex: 1 1 30%;
+}
+.pop-zoom-hint {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin: 0 0 4px;
+}
+.pop-face, .pop-faces-all {
+  padding: 6px 12px;
+  min-height: 32px;
+  border: 1.5px solid #888;
+  border-radius: 20px;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+}
+.pop-face.active {
+  background: #e8f2e9;
+  border-color: #2e5d3a;
+  color: #2e5d3a;
+  font-weight: 700;
+}
+.leaflet-popup-content .pop-classify { margin: 10px 0 2px; }
+.pop-record-link {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 2px solid var(--trail-deep);
+  border-radius: 8px;
+  color: var(--trail-deep);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  background: #fff;
+}
+.pop-record-link:hover { background: #eef4ee; }
+.pop-record-link:focus-visible,
+.pop-face:focus-visible,
+.pop-faces-all:focus-visible,
+.pop-cls-save:focus-visible {
+  outline: 3px solid var(--trail-deep);
+  outline-offset: 2px;
+}
+.leaflet-popup-content .pop-cls label { font-size: 0.9rem; }
+.leaflet-popup-content .pop-cls select,
+.leaflet-popup-content .pop-cls input[type="text"] {
+  font-size: 0.9rem;
+  padding: 6px 8px;
+  min-height: 34px;
+}
+.pop-cls-save {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  min-height: 42px;
+  margin-top: 8px;
+  border: 2px solid #2e5d3a;
+  border-radius: 10px;
+  background: #2e5d3a;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.pop-cls-save:hover { background: #24512f; }
+
+/* --- Photo lightbox (Paul, Nov 13, 2026): full-size photo
+   overlay. Hand-rolled, no library. Sits above the map. --- */
+.itm-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: rgba(18, 22, 18, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.itm-lightbox[hidden] { display: none; }
+.itm-lb-img {
+  max-width: 92vw;
+  max-height: 84vh;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+.itm-lb-close, .itm-lb-prev, .itm-lb-next {
+  position: absolute;
+  z-index: 2;
+  min-width: 48px;
+  min-height: 48px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.itm-lb-close { top: 16px; right: 16px; }
+.itm-lb-prev { left: 16px; top: 50%; transform: translateY(-50%); }
+.itm-lb-next { right: 16px; top: 50%; transform: translateY(-50%); }
+.itm-lb-close:hover, .itm-lb-prev:hover, .itm-lb-next:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.itm-lb-close:focus-visible, .itm-lb-prev:focus-visible,
+.itm-lb-next:focus-visible, .itm-lb-drive:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+.itm-lb-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14px 20px 18px;
+  text-align: center;
+  color: #fff;
+  font-size: 15px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+}
+.itm-lb-drive {
+  display: inline-block;
+  margin-left: 14px;
+  color: #fff;
+  font-weight: 700;
+}
+.itm-lb-drive[hidden] { display: none; }
+
+/* --- Legend: the amber "can wait" diamond (R1). The red
+   .swatch.alert already exists. --- */
+#legend .swatch.alert.wait,
+#legend-print-body .swatch.alert.wait { background: #e08214; }
+
+/* --- "The land" extras (R2/§7): the opacity slider and the
+   key strip under the Tree height toggle. --- */
+.land-extra { padding: 2px 4px 6px 26px; }
+/* --- Per-type asset toggles (Paul, Nov 12, 2026): the eleven
+   type checkboxes under ITM Assets, indented like the land
+   extras. The labels themselves reuse #layer-toggles label.
+   NCTA Places kinds (Paul, Nov 13, 2026) share the same
+   indent. --- */
+.asset-types, .places-kinds { padding: 2px 4px 6px 26px; }
+.asset-types label, .places-kinds label {
+  padding: 2px 4px; font-size: 0.85rem;
+}
+/* --- Expandable sub-toggles (Paul, Nov 13, 2026): the per-item
+   checkboxes under ITM Assets / NCTA Places start hidden behind
+   a disclosure button on the layer row; the button opens them.
+   The main checkbox still controls the whole layer. --- */
+.sub-toggles.collapsed { display: none; }
+/* Bigger arrow (Paul, Nov 16, 2026 — the old volunteers
+   need to see it): 0.9rem was a small stylish triangle;
+   1.3rem with a 28px tap target is the disclosure now. */
+.tog-expand {
+  margin-left: auto;
+  flex: 0 0 auto;
+  min-width: 28px;
+  text-align: center;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 1.3rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.tog-expand:hover { background: var(--paper-hover); color: var(--ink); }
+.land-extra .opacity {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+.land-extra .opacity input[type="range"] {
+  flex: 1;
+  accent-color: var(--trail);
+}
+.land-extra .opacity-val {
+  min-width: 2.2em;
+  text-align: right;
+  color: var(--ink-soft);
+}
+.land-extra .key { margin-top: 6px; }
+.land-extra .key .strip {
+  height: 10px;
+  border-radius: 5px;
+  border: 1px solid #b9cba5;
+  background: linear-gradient(90deg,
+    #ffffff 0%, #ffffff 4%,
+    #d7eec8 8%, #b4dca5 20%, #8cc878 36%, #64af5a 56%,
+    #409148 76%, #226e37 80%, #0c401e 100%);
+}
+.land-extra .key .marks {
+  position: relative;
+  height: 1.2em;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+.land-extra .key .marks span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.land-extra .key .ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+.land-extra .key-note {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 2px 0 0;
+}
+
+/* --- Panel footer (R7): Present, Hide panel, About. --- */
+.panel-foot {
+  margin-top: 8px;
+  padding-top: 8px;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.panel-foot a { color: var(--trail-deep); }
+.panel-foot .panel-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--trail-deep);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* --- Visit welcome (R6): the one-line welcome, only in
+   Visit view. --- */
+#visit-welcome {
+  display: none;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+body.view-visit #visit-welcome { display: block; }
+
+/* --- View-based panel visibility (R6): Explore hides the
+   work list and the management toggles; Visit hides the
+   panel chrome beyond Find and the welcome. --- */
+body.view-explore #work-heading,
+body.view-explore #work-list,
+body.view-explore #work-more,
+body.view-explore #maintenance-toggle { display: none; }
+body.view-visit #work-heading,
+body.view-visit #work-list,
+body.view-visit #work-more,
+body.view-visit #maintenance-toggle,
+body.view-visit #layer-toggles,
+body.view-visit .adopt-line,
+body.view-visit #inspector,
+body.view-visit h2:has(+ #background-choices),
+body.view-visit #background-choices,
+body.view-visit .panel-foot { display: none; }
+
+/* --- Work view declutter (Paul, Nov 13, 2026): the Adoption bar,
+   the Find gazetteer, and the inspector ("Select a section") are
+   hidden in Work view to make panel space. Nothing is deleted —
+   the elements stay in the DOM and in Explore/Visit; removing
+   these rules brings them back. --- */
+body.view-work h2:has(+ .adopt-line),
+body.view-work .adopt-line,
+body.view-work h2:has(+ #gazetteer),
+body.view-work #gazetteer,
+body.view-work .gaz-hint,
+body.view-work #inspector { display: none; }
+
+/* --- Work view Copy link (Paul, Nov 13, 2026): in Work view the
+   Copy link button leaves the panel and becomes a small link icon
+   in the upper-right corner of the window. The button stays in
+   the panel DOM (its click handler is unchanged) — in Work view
+   it is fixed to the corner and shows only a link glyph; in
+   Explore/Visit it stays the full-width panel button. --- */
+body.view-work #copy-link-btn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1100;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  font-size: 0;
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231c2a1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px 20px;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+body.view-work #copy-link-btn:hover { background-color: var(--paper-hover); }
+
+/* --- Work view Print button (Paul, Nov 17, 2026): in Work view the
+   Print button leaves the panel like Copy link does and becomes a
+   printer icon in the upper-right corner, immediately left of the
+   link icon — same 36 px, same border, shadow and paper
+   background, 6 px gap, no overlap. In Explore/Visit it stays the
+   panel icon next to Copy link. --- */
+body.view-work #btn-print {
+  position: fixed;
+  top: 10px;
+  right: 52px;
+  z-index: 1100;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  font-size: 0;
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231c2a1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9V2h12v7'/%3E%3Cpath d='M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2'/%3E%3Crect x='6' y='14' width='12' height='8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px 20px;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+body.view-work #btn-print:hover { background-color: var(--paper-hover); }
+/* With both buttons fixed to the corner, the panel-actions row in
+   the panel is empty — collapse its margin. */
+body.view-work .panel-actions { margin: 0; }
+
+/* --- Present mode (R4): the panel chrome hides and the
+   record card floats over the map, bottom-left, above the
+   strip; the map takes the full width and the type grows.
+   The empty inspector stays hidden — a room with nothing
+   selected needs the map, not an instruction. --- */
+body.present #map { margin-left: 0; }
+body.present #panel {
+  position: fixed;
+  left: 12px;
+  bottom: 52px;
+  top: auto;
+  width: min(360px, calc(100vw - 24px));
+  height: auto;
+  max-height: 55vh;
+  padding: 0;
+  border: 1px solid var(--paper-line);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+}
+body.present #panel > :not(#inspector) { display: none; }
+body.present #inspector:not(.has-selection) { display: none; }
+body.present #corner-ui { display: none; }
+body.present .leaflet-popup-content { font-size: 1.05rem; }
+body.present .leaflet-popup-content h3 { font-size: 1.15rem; }
+body.present .leaflet-tooltip.section-name-label { font-size: 17px; }
+body.present .chainage-label span { font-size: 14px; }
+/* R7: 40 px action targets in Present mode, on desktop too. */
+body.present .insp-actions button {
+  min-height: 40px;
+  min-width: 40px;
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+body.present .pop-face,
+body.present .pop-faces-all {
+  min-height: 40px;
+  padding: 8px 14px;
+  font-size: 0.95rem;
+}
+/* Popup redesign (Paul, Nov 13, 2026): the Save button and the
+   lightbox caption stay legible at projection distance too. */
+body.present .pop-cls-save {
+  min-height: 44px;
+  font-size: 1rem;
+}
+body.present .itm-lb-bar { font-size: 1.1rem; }
+body.present .pop-zoom-hint { font-size: 0.9rem; }
+#present-strip {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1200;
+  background: var(--paper);
+  border-top: 1px solid var(--paper-line);
+  padding: 10px 16px;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--trail-deep);
+  text-align: center;
+}
+#show-panel-btn {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1200;
+  padding: 8px 14px;
+  font: inherit;
+  font-size: 0.95rem;
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Present-mode tree-height key (R4/§7): the key rides in its
+   own fixed card, top-right, while the overlay is on — the
+   panel (and its key) is hidden in a room. */
+#present-key {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1200;
+  width: 240px;
+  background: var(--paper);
+  border: 1px solid var(--paper-line);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  padding: 10px 12px;
+  font-size: 0.85rem;
+}
+#present-key .strip {
+  height: 10px;
+  border-radius: 5px;
+  border: 1px solid #b9cba5;
+  background: linear-gradient(90deg,
+    #ffffff 0%, #ffffff 4%,
+    #d7eec8 8%, #b4dca5 20%, #8cc878 36%, #64af5a 56%,
+    #409148 76%, #226e37 80%, #0c401e 100%);
+}
+#present-key .marks {
+  position: relative;
+  height: 1.2em;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+#present-key .marks span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+#present-key .ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+#present-key .key-note {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 2px 0 0;
+}
+
+/* ---- Leech Lake Watershed viewer additions (Nov 20, 2026) ---- */
+/* Masthead has no logo yet — branding undecided (see about.html). */
+.masthead-logo { display: none; }
+/* ⓘ info link after each layer-toggle label (Paul, Nov 20, 2026;
+   source-page links Nov 21, 2026): opens the page that describes
+   the layer in a new tab — the source's own dataset or program
+   page where the layer carries one (app.js def.infoUrl), otherwise
+   the layer's section in data-sources.html. */
+.tog-info {
+  display: inline-block; margin-left: 4px;
+  color: #2f5233; text-decoration: none; font-style: normal;
+  font-size: 0.95em; line-height: 1; vertical-align: middle;
+}
+.tog-info:hover { text-decoration: underline; }
+/* Collapsible theme groups (Paul, Nov 21, 2026 — like the trail
+   map): the disclosure caret rides at the right edge of the
+   heading row, in the .tog-expand voice (1.3rem, 28px target),
+   and points right while the group is closed. The heading rows
+   themselves (.tog-group, #basemap-head) already carry the
+   flex row, pointer and hover from the template, and the
+   .collapsed rules hide the folded bodies. */
+.tog-group-caret {
+  margin-left: auto;
+  flex: 0 0 auto;
+  min-width: 28px;
+  text-align: center;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+.tog-group:hover .tog-group-caret,
+#panel #basemap-head:hover .tog-group-caret { color: var(--ink); }
+.tog-group:focus-visible,
+#panel #basemap-head:focus-visible {
+  outline: 2px solid var(--trail);
+  outline-offset: 2px;
+}
+/* Zoom-gate note on the Parcels toggle. */
+.tog-note {
+  display: block; font-size: 0.82rem; color: #5c6657;
+  margin: 2px 0 6px 22px;
+}
+/* Legend rows (swatch + label), built from LAYERS by app.js. */
+.leg-row { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 0.9rem; }
+.leg-row .tog-swatch-line, .leg-row .tog-swatch-fill,
+.leg-row .tog-swatch-pin { flex: none; }
+/* Census seasonal-share scale in the legend (app.js builds the
+   chips from the same SEASONAL_STEPS the map fills use). */
+.leg-scale { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 4px 0 6px; }
+.leg-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 0.82rem; }
+.leg-chip-swatch {
+  width: 14px; height: 10px; flex: none;
+  border: 1px solid #40513f;
+}
+/* Census variable switcher (Nov 21, 2026): the "Colour by"
+   dropdown at the head of the Census group in the panel. The
+   label stacks over a full-width select; the note under it
+   carries the chosen variable's caveat (income, density). */
+.census-var-row { padding: 4px 4px 2px; }
+.census-var-label {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch !important;
+  gap: 4px !important;
+  font-size: 11px !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  padding: 2px 0 !important;
+  cursor: default !important;
+}
+.census-var-select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+  cursor: pointer;
+  min-height: 36px;
+}
+.census-var-note {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 4px 0 2px;
+}
+/* Census group plain-language flow (Paul, Nov 21, 2026): the
+   one-line how-to at the head of the group, the line under the
+   dropdown, and the legend under the layer rows — the legend
+   shows the chosen variable's scale while any census layer is
+   on, and the hint stands in its place while none is. */
+.census-flow {
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 6px 4px 2px;
+}
+.census-var-sub {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 4px 0 0;
+}
+.census-panel-legend {
+  margin: 8px 4px 4px;
+  padding: 8px 10px;
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+}
+.census-panel-hint {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.census-panel-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+.census-panel-poverty {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 4px 0 0;
+}
+
+/* Layer search (Nov 21, 2026): the filter box at the top of
+   the panel, in the panel's own input voice (white field, the
+   pale-green border the panel's selects use). While a search
+   is active, folded group and sub-group bodies open so a
+   match is never hidden inside a collapsed group; clearing
+   the box restores the reader's own folds, because the
+   filter only shows and hides rows — the .collapsed classes
+   are untouched (app.js: layerSearch). */
+#layer-search-wrap { margin: 2px 0 6px; }
+.layer-search-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 0 0 4px;
+}
+#layer-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 9px;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+}
+#layer-search:focus {
+  outline: 2px solid var(--trail);
+  outline-offset: 1px;
+}
+.layer-search-none {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 6px 2px 0;
+}
+#layer-toggles.searching .tog-group-body.collapsed,
+#layer-toggles.searching .tog-subgroup-body.collapsed {
+  display: block;
+}
+/* Sub-group headings (Historical maps; the Political &
+   administrative jurisdictions) carry the same right-edge
+   caret as the group headings, a touch smaller. */
+.tog-subgroup .tog-group-caret {
+  margin-left: auto;
+  flex: 0 0 auto;
+  min-width: 24px;
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+.tog-subgroup:hover .tog-group-caret { color: var(--ink); }
+.tog-subgroup:focus-visible {
+  outline: 2px solid var(--trail);
+  outline-offset: 2px;
+}
+
+/* Map-corner Copy link button (user-requested; restored
+   Nov 21, 2026): an icon-only 36 px button in the upper-right
+   corner of the map, in the same paper/border/shadow voice as
+   the corner Legend button and the trail map's corner link
+   button. Its fallback card (shown when the Clipboard API is
+   unavailable) and its "Link copied" pill ride in the same
+   corner stack. */
+#copy-link-corner {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+#copy-link-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid #a89a5b;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+#copy-link-btn:hover { background: var(--paper-hover); }
+#copy-link-btn svg { display: block; width: 20px; height: 20px; }
+#copy-link-card { width: 300px; }
+#copy-link-card p { font-size: 0.85rem; margin: 4px 0 8px; }
+#copy-link-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #b9cba5;
+  border-radius: 6px;
+}
+#copy-link-close {
+  background: var(--paper);
+  border: 1px solid #a89a5b;
+  border-radius: 14px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+#copy-link-close:hover { background: var(--paper-hover); }
+#copy-link-pill {
+  background: var(--trail-deep);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 5px 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+#copy-link-pill[hidden] { display: none; }
+@media print {
+  #copy-link-corner { display: none; }
+}

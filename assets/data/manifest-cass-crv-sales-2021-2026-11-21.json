@@ -1,0 +1,24 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-crv-sales-2021.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/CRVSales/MapServer/4",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon; direct geojson query (CRV joined layers support neither returnIdsOnly nor resultOffset paging)",
+      "pull_date": "2026-11-21",
+      "feature_count": 755,
+      "bytes": 1224749,
+      "count_check_returnCountOnly": 755,
+      "ids_listed": null,
+      "recount_after_pull": 755,
+      "no_geometry_rows": 0,
+      "sale_year": 2021,
+      "purchase_price_stats": {
+        "n_with_price": 755,
+        "min": 3500,
+        "median": 180000,
+        "max": 2480000
+      },
+      "caveats": "Certificate of Real Estate Value sales for 2021 (parcel polygons). FENCE: buyer/seller names, submitter name, phone, organisation, EMV/valuation fields (LAND_EST/BUILDING/LMV/EMV_WORK), mortgage and payment fields were NOT requested or stored. Purchase price + sale date ARE stored (public-record sale facts, the substance of the change/turnover layer); the wire-in may drop price if the parcel fence is applied strictly. Sale dates are stored as YYYYMMDD numbers. FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored."
+    }
+  }
+}

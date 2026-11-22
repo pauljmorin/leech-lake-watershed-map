@@ -1,0 +1,32 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-soils-hydric.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Soils/MapServer/0",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 4939,
+      "bytes": 8683715,
+      "count_check_returnCountOnly": 4937,
+      "ids_listed": 4939,
+      "recount_after_pull": 4937,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 573751,
+      "vertices_after_simplification": 196924,
+      "simplification": "Douglas-Peucker ~7 m (parcels/NWI pattern)",
+      "caveats": "Hydric Soils from Soil Survey (SSURGO-derived county layer). The viewer already has a SSURGO hydric cut (6,651 polygons, fish/wildlife wire-in) -- the county layer is the same source family served by the county, kept for cross-check and for the county's own map-unit naming. FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored.",
+      "top_MUNAME": {
+        "Histosols, depressional": 1696,
+        "Cathro-Seelyeville complex": 454,
+        "Typic borohemists, nonacid-typic borosaprists association": 372,
+        "Sandwick loamy sand": 220,
+        "Humaquepts, sandy": 189,
+        "Rifle mucky peat": 182,
+        "Cathro muck": 178,
+        "Typic borohemists, acid": 174,
+        "Aqualfs": 163,
+        "Humaquepts": 157
+      }
+    }
+  }
+}

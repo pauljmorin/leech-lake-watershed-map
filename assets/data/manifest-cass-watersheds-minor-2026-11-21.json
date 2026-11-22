@@ -1,0 +1,20 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-watersheds-minor.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Additional_Layers/MapServer/2",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 112,
+      "bytes": 1460060,
+      "count_check_returnCountOnly": 112,
+      "ids_listed": 112,
+      "recount_after_pull": 112,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 50259,
+      "vertices_after_simplification": 36666,
+      "simplification": "Douglas-Peucker ~7 m (parcels/NWI pattern)",
+      "caveats": "Minor watersheds (HUC 14). FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored."
+    }
+  }
+}

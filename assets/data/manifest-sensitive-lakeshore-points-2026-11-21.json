@@ -1,0 +1,32 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "sensitive-lakeshore-points.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_sensitive_lakeshore/FeatureServer/0",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 11289,
+      "bytes": 3436688,
+      "analysis_counts": {
+        "Full": 8083,
+        "Abbreviated": 3206
+      },
+      "top_lakes_by_point_count": {
+        "Leech": 4845,
+        "Woman": 649,
+        "Boy": 549,
+        "Ten Mile": 533,
+        "Birch": 332,
+        "Long": 331,
+        "Baby": 248,
+        "Wabedo": 240
+      },
+      "sum_idx_range": [
+        0.0,
+        43.0
+      ],
+      "caveats": "DNR Sensitive Lakeshore Sensitivity Index (layer 0) -- one point per shoreland analysis window, sum_idx 0-15, rel_score = sum_idx / 23. This service IS the GIS of the 2010 Thompson & Perleberg model output (checked 2026-11-21). `analysis` separates 'Full' (full-survey lakes with individual reports) from 'Abbreviated' (rapid-assessment-model lakes); carry the field so the viewer can label/filter them. 11,289 points is heavy -- needs a display plan (clustering / zoom-gating) before publishing. Loon nesting areas and plant beds are PDF-only and are NOT in this file. Feature count matches the live returnCountOnly count.",
+      "rel_score_note": "CORRECTION to the 2026-11-21 service check, which stated rel_score = sum_idx / 23: that formula does NOT hold in the pulled data (e.g. sum_idx 43 -> rel_score 1.0; sum_idx 4 -> rel_score 0; sum_idx 15 -> 0.44). rel_score is the service's own per-window relative score and is carried exactly as stored; do not recompute it from sum_idx. Full lakes score sum_idx 0-43; Abbreviated lakes 0-9 -- the two products score on different scales, so keep the `analysis` field visible wherever scores are shown."
+    }
+  }
+}

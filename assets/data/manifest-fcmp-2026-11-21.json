@@ -1,0 +1,43 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "fcmp-fish-tissue.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_pca/env_fcmp_fish_tissue_results/FeatureServer/0",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 2111,
+      "bytes": 1828832,
+      "waterbodies": 34,
+      "species": [
+        "Black crappie",
+        "Bluegill (sunfish)",
+        "Brook trout",
+        "Cisco species",
+        "Lake whitefish",
+        "Largemouth bass",
+        "Muskellunge",
+        "Northern pike",
+        "Rock bass",
+        "Smallmouth bass",
+        "Sunfish",
+        "Tullibee (cisco)",
+        "Walleye",
+        "White sucker",
+        "Yellow bullhead",
+        "Yellow perch"
+      ],
+      "year_range": [
+        1970,
+        2025
+      ],
+      "chemical_groups": {
+        "Metals": 1889,
+        "PCBs": 92,
+        "PFAS": 130
+      },
+      "distinct_station_ids": 43,
+      "no_geometry_rows": 0,
+      "caveats": "MPCA Fish Contaminant Monitoring Program (FCMP) fish-tissue results. ROWS ARE PER-SAMPLE-PER-CHEMICAL, not sites: one fish sample yields several rows (one per chemical analysed); 2111 rows across 43 distinct station ids and 34 waterbodies. The earlier synthesis fetch hit the server transfer limit at ~982 rows; this pull paginates by objectid (count -> ids -> chunk fetch -> recount) and the feature count matches the live returnCountOnly count (2111). waterbody is kept verbatim: Leech Lake is 'Leech (Main Basin)', not 'Leech Lake' -- a join on lake name needs normalising. detect_flag / detection limits carried per row; result_value_type distinguishes measured vs estimated values. 0 rows have no point geometry (station lat/lon attributes retained as fallback)."
+    }
+  }
+}

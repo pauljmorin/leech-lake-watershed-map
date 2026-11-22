@@ -1,0 +1,31 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "snowmobile-trails.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/trans_snowmobile_trails_mn/FeatureServer/0",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 5,
+      "bytes": 532794,
+      "owner_type_counts": {
+        "CLUB": 1,
+        "GIA": 4
+      },
+      "trail_name_counts": {
+        "Cass County Trails": 2,
+        "Forest Rider Trails": 1,
+        "North Country Trails": 1,
+        "Nevis Wilder Trails": 1
+      },
+      "maint_by_counts": {
+        "Cass County Trails": 2,
+        "Forest Riders Snowmobile Trail": 1,
+        "PBST": 1,
+        "Nevis Wilder South": 1
+      },
+      "field_miles_sum": 1117.8,
+      "drawn_clipped_miles": 292.03,
+      "caveats": "DNR Snowmobile Trails service, state + Grant-in-Aid trails (owner_type distinguishes them; see counts). No contact fields pulled (public_poc / public_pho / pocemail excluded, same as the ITM pull); pocwebsite (public club/org URL) is carried. Geometries are clipped to the HUC8 boundary, so a trail crossing the boundary is cut; the `miles` field is the FULL segment length and can exceed the drawn clipped length. Feature count matches the live returnCountOnly count."
+    }
+  }
+}

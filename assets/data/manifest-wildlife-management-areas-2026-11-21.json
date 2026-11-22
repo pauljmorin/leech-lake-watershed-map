@@ -1,0 +1,13 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "wildlife-management-areas.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/bdry_dnr_wildlife_mgmt_areas_pub/FeatureServer/0",
+      "query": "where 1=1, geometry = HUC8 07010102 polygon (site/data/watershed-whole-basin.geojson), spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 8,
+      "bytes": 55119,
+      "caveats": "DNR Wildlife Management Area boundaries (publicly accessible). Research (\u00a74.8a) verified 8, incl. Mud Goose 17,011 ac -- this pull: 8 features. Count identical against the alternate WBD clip geometry (scripts/huc8-07010102-clip.geojson). gis_area_acres is the service's GIS acreage. writeup_pdf_name / has_writeup flag DNR write-ups where present; the write-up files themselves are not pulled."
+    }
+  }
+}

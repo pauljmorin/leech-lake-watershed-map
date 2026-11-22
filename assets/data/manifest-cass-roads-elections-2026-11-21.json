@@ -1,0 +1,21 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-roads-elections.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Elections/MapServer/6",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 3477,
+      "bytes": 4212640,
+      "count_check_returnCountOnly": 3477,
+      "ids_listed": 3477,
+      "recount_after_pull": 3477,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 60228,
+      "vertices_after_simplification": 60228,
+      "simplification": "none",
+      "caveats": "County Elections road centerlines (911 addressing base). Address ranges, ZIP, ESN/MSAG/PSAP and editor fields dropped. FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored.",
+      "top_ROADCLASS": {}
+    }
+  }
+}

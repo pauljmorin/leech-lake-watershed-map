@@ -1,0 +1,28 @@
+{
+  "source_url": "Hand-built from verified public histories; per-feature source URL in each feature's source property. Synthesis: dataset-synthesis-2026-11-20.md \u00a75.7-5.8. Community list: http://mn.gov/indian-affairs/tribal-nations-in-minnesota/gaa-zagaskwaajimekaag-leech-lake-band-of-ojibwe.jsp",
+  "query": "No service query \u2014 hand-built point layer. Point-in-polygon clip test against scripts/huc8-07010102-clip.geojson (WBD HUC8 07010102) run 2026-11-21; GNIS populated-place status checked where available (geocoder + GNIS-derived coordinates via TopoQuest/NYBG/Wikipedia GNIS citations).",
+  "pull_date": "2026-11-21",
+  "feature_count": 14,
+  "bytes": 11885,
+  "in_watershed_count": 8,
+  "neighbor_count": 6,
+  "in_watershed": [
+    "Bena",
+    "Boy River",
+    "Federal Dam",
+    "Oak Point",
+    "Onigum",
+    "Smokey Point",
+    "Sugar Point",
+    "Walker"
+  ],
+  "neighbors_outside_watershed": [
+    "Ball Club",
+    "Cass Lake",
+    "Inger",
+    "Mission",
+    "Pennington",
+    "Squaw Lake"
+  ],
+  "caveats": "Hand-placed points; location_precision is 'approximate' for every feature \u2014 community centers, not surveyed sites. CLIP OUTCOME: 8 in-watershed (Walker, Federal Dam, Boy River, Onigum, Bena, Sugar Point, Oak Point, Smokey Point); 6 labeled neighbors outside HUC8 07010102 (Cass Lake, Ball Club, Inger, Squaw Lake, Mission, Pennington). Cass Lake confirms synthesis \u00a74.4 (city polygon 0-intersects the watershed). Bena is IN the watershed by the clip, contrary to the earlier 'likely outside HUC' expectation \u2014 corroborated by synthesis \u00a74.4, which lists Bena among the 9 incorporated places intersecting the watershed. Ball Club (~2.7 km), Pennington (~7.4 km), Mission (~9.3 km), Inger (~24 km) and Squaw Lake (~29 km) lie outside the HUC8 boundary but are Reservation communities, kept as labeled neighbors. Founding dates are null wherever not verified: all eight Reservation communities (Ball Club, Inger, Squaw Lake, Sugar Point, Oak Point, Mission, Pennington, Smokey Point) plus Onigum and Bena carry no invented date \u2014 founding histories need Band sources. Steamboat Bay is NOT listed: it is a bay (starry-stonewort/Anderson's Cove site), not a verified settlement. Whipholt is NOT listed as a feature: named community near Walker with no verified founding date \u2014 recorded here as a gap. Mission and Sugar Point/Oak Point/Smokey Point placements are the least certain (cemetery/road/cape anchors, flagged in each feature's notes) and need Band confirmation. THPO/Band: YES for any historical characterization of Onigum and the Reservation communities \u2014 this layer carries factual names only, no characterization. Dates are from histories, not GNIS."
+}

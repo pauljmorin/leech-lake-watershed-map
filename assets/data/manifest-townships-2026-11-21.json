@@ -1,0 +1,47 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "townships.geojson": {
+      "source_url": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Census2020/MapServer/20",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 55,
+      "bytes": 1049544,
+      "subtype_counts": {
+        "township": 41,
+        "unorganized territory": 5,
+        "city": 9
+      },
+      "county_counts": {
+        "Cass": 36,
+        "Hubbard": 15,
+        "Beltrami": 4
+      },
+      "mtfcc_counts": {
+        "G4040": 55
+      },
+      "lsadc_counts": {
+        "44": 41,
+        "46": 5,
+        "25": 9
+      },
+      "funcstat_counts": {
+        "A": 41,
+        "S": 5,
+        "F": 9
+      },
+      "cousubcc_counts": {
+        "T1": 41,
+        "Z3": 5,
+        "C5": 9
+      },
+      "geometry_type_counts": {
+        "Polygon": 51,
+        "MultiPolygon": 4
+      },
+      "no_geometry_rows": 0,
+      "total_pop100": 40461,
+      "caveats": "Census TIGERweb, tigerWMS_Census2020 MapServer layer 20 County Subdivisions (2020 vintage). FULL layer as synthesis 4.3 defines it: townships, unorganized territories (UTs), AND cities as subdivisions -- cities are NOT filtered out, filtering them would leave holes in the grid. Unorganized territories are distinguished by the derived `subtype` field ('unorganized territory', from NAME ending in ' UT'); organized townships are subtype 'township' (NAME ending in ' township'); cities are subtype 'city' (NAME ending in ' city'). Popups should use `subtype`, not the raw LSADC/FUNCSTAT/COUSUBCC codes. (Verified decodes on this pull: LSADC 44 = township, 46 = unorganized territory, 25 = city; FUNCSTAT A = township, S = UT, F = city-as-subdivision; COUSUBCC T1 = township, Z3 = UT, C5 = city. MTFCC is G4040 for all 55 features in this layer.) COUNTY is the FIPS code (007 Beltrami, 021 Cass, 057 Hubbard); `county_name` is derived from it. POP100/HU100 are the 2020 Census population/housing counts for the subdivision. AREALAND/AREAWATER are square metres. Cities in this layer DUPLICATE the Incorporated Places layer (synthesis 4.4) -- same polygons in both layers, not a data error. Features are clipped to the watershed by intersection, so edge subdivisions (e.g. the Bemidji city sliver) appear only as the part inside HUC8 07010102. Feature count matches the live returnCountOnly count."
+    }
+  }
+}

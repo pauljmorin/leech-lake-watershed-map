@@ -1,0 +1,13 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "scientific-natural-areas.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/bdry_scientific_and_nat_areas/FeatureServer/4",
+      "query": "where 1=1, geometry = HUC8 07010102 polygon (site/data/watershed-whole-basin.geojson), spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 3,
+      "bytes": 3038,
+      "caveats": "DNR Scientific and Natural Area boundaries (layer 4). Research (\u00a74.8c) verified 3 features / 2 SNAs: Lester Lake (321 ac, designated) and Hole in the Bog Peatland in 2 polygons (1,496.5 ac designated, DNR Forestry land; 145.1 ac 'Not Designated', USFS-owned) -- this pull: 3 features. Count identical against the alternate WBD clip geometry (scripts/huc8-07010102-clip.geojson). designated is the service's designation flag; 'Not Designated' polygons are still SNA boundary polygons, not designated SNA land."
+    }
+  }
+}

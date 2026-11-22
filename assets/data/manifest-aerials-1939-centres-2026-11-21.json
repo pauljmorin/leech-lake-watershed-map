@@ -1,0 +1,29 @@
+{
+  "dataset": "aerials-1939-centres",
+  "title": "1939 aerial photograph centres (ASCS flights BXQ Cass / BXU Hubbard)",
+  "source": "Minnesota Historical Aerial Photographs Online (MHAPO), University of Minnesota Borchert Map Library \u2014 photo-centre service gis5.uspatial.umn.edu/arcgis/rest/services/mhapo/MHAPO_dynamic/MapServer/0",
+  "source_page": "https://apps.lib.umn.edu/mhapo/",
+  "pull_date": "2026-11-21",
+  "count": 500,
+  "counts": {
+    "BXQ_Cass": 253,
+    "BXU_Hubbard": 247,
+    "centre_on_lake_water": 1,
+    "shows_lake_water": 1,
+    "centre_inside_watershed_HUC8": 103,
+    "footprint_touching_watershed": 34
+  },
+  "flights": {
+    "BXQ": "Cass County, flown 15 Aug, 18 Aug, 17 Sep 1939, rolls 1-9, 1:20,000, 9-inch contact prints",
+    "BXU": "Hubbard County, flown 21 Aug 1939, rolls 1-5, 1:20,000, 9-inch contact prints"
+  },
+  "notes": [
+    "Each point is the centre of one 1939 frame; the frame itself is about 2.8 miles across, so a centre outside the watershed can still show watershed ground.",
+    "Only 2 of the 500 frames show lake water (bxu04058 centre on Walker Bay water; bxu03065 Walker Bay west shore). The lake frames of the Cass flight (BXQ roll 5 entirely, most of roll 3) were never digitized \u2014 a holdings gap, not an index gap.",
+    "Beltrami County has no 1939 flight; its earliest is 1940.",
+    "Download URLs follow the verified pattern https://geo.lib.umn.edu/dnr_historical_aerial_imagery/airphotos/usda/<symbol>/y1939/<photo_id>.jpg, no login required; each frame about 3.7 MB, ~5600x5500 px, ~0.82 m/px.",
+    "Frame dates are stamped on the frames themselves; per-frame dates are not in the MHAPO service.",
+    "Status values: on_lake (centre on lake water), shows_lake_water, in_watershed (centre inside HUC8 07010102, 101 excluding the 2 lake frames), near_watershed (footprint touching), outside_watershed."
+  ],
+  "file": "site/data/aerials-1939-centres.geojson"
+}

@@ -1,0 +1,32 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "cass-walker-zoning.geojson": {
+      "source_url": "https://cassweb.casscountymn.gov/arcgis/rest/services/Municipalities/MapServer/72",
+      "query": "where 1=1, geometry = DNR Major 8 'Leech Lake River' (HUC8 07010102) polygon from watershed-whole-basin.geojson, spatialRel=esriSpatialRelIntersects; full 4,776-vertex polygon",
+      "pull_date": "2026-11-21",
+      "feature_count": 154,
+      "bytes": 106871,
+      "count_check_returnCountOnly": 154,
+      "ids_listed": 154,
+      "recount_after_pull": 154,
+      "no_geometry_rows": 0,
+      "vertices_before_simplification": 8281,
+      "vertices_after_simplification": 1960,
+      "simplification": "Douglas-Peucker ~7 m (parcels/NWI pattern)",
+      "caveats": "City of Walker Zoning Classification, JAN 2026 (sublayer of the Zoning JAN 2026 group layer 70). OWNAME dropped (owner name). This is the city's zoning, not the county Zoning Classification layer (no public endpoint). FIELD FENCE: owner/taxpayer names, mailing/situs addresses, EMV/valuation, tax amounts/balances, mortgage/payment details and staff/editor names were NOT requested or stored.",
+      "top_Zone_Name": {
+        "Traditional Residential": 39,
+        "Transitional Commercial": 26,
+        "Central Business District": 19,
+        "Public": 17,
+        "Low Density Residential": 11,
+        "Multi-Family Residential": 11,
+        "Parks and Recreation": 11,
+        "General Commercial": 10,
+        "ROW": 4,
+        "Rural Residential": 3
+      }
+    }
+  }
+}

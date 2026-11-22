@@ -1,0 +1,84 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "nrhp.geojson": {
+      "source_url": "https://mapservices.nps.gov/arcgis/rest/services/cultural_resources/nrhp_locations/MapServer",
+      "query": "layers 0 (points) + 1 (polygons), where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects; per-refnum lookup (no geometry) for each verified/borderline listing",
+      "pull_date": "2026-11-21",
+      "feature_count": 8,
+      "bytes": 3711,
+      "live_clipped_counts": {
+        "points": 7,
+        "polygons": 1
+      },
+      "live_clipped_refnums": [
+        "01000766",
+        "02001706",
+        "100000565",
+        "100009470",
+        "80001989",
+        "80001990",
+        "80001994",
+        "90001144"
+      ],
+      "service_presence": {
+        "90001144": [
+          0
+        ],
+        "80001994": [
+          0
+        ],
+        "02001706": [
+          0
+        ],
+        "80001990": [
+          0
+        ],
+        "100009470": [
+          0
+        ],
+        "14000908": [],
+        "13001111": [],
+        "76001049": [
+          0
+        ],
+        "100000565": [
+          0
+        ],
+        "80001989": [
+          0
+        ]
+      },
+      "borderline_clip_outcomes": {
+        "100009470": "IN",
+        "14000908": "IN",
+        "13001111": "OUT",
+        "76001049": "OUT"
+      },
+      "borderline_included": [
+        "100009470",
+        "14000908"
+      ],
+      "excluded_verified_outside": [
+        "Chippewa Agency Historic District",
+        "Crow Wing State Park",
+        "Gull Lake Mounds",
+        "Hole-in-the-Day House",
+        "Old Backus",
+        "Rice Lake Hut Rings",
+        "Sherwood Forest Lodge",
+        "Soo Line Depot (Remer)",
+        "USFS Remer Ranger Station",
+        "Winnibigoshish Lake Dam",
+        "Winnibigoshish Resort",
+        "Brainerd & Northern Minnesota-M&I Railway Depot (Pine River)"
+      ],
+      "former_listings_not_mapped": [
+        "MN State Sanatorium (Ah-Gwah-Ching)",
+        "Julius Neils House",
+        "Sixth Street Commercial Building"
+      ],
+      "caveats": "NPS National Register of Historic Places, public dataset. The public dataset EXCLUDES address-restricted / sensitive listings, so restricted ones are absent from the live service or present only as points -- absence from the service does NOT mean absence from the watershed. COUNT RECONCILIATION: live clipped pull returned 7 points + 1 polygon (returnCountOnly verified before and after). All 7 live points are in this file (Chase Hotel, Conservation Building, Great Northern Railway Bridge, Battle Point, Hackensack Conservation Building, Consolidated School District No. 22, Winnibigoshish Resort); the 1 live polygon is the Minnesota State Sanatorium, a FORMER listing (listed 2001-07-25, removed 2019-05-28, demolished 2008) and is deliberately NOT mapped as current. This file has 8 features: the 7 live points plus the Widow Lake Segment, which is absent from the service and enters via the GNIS proxy point (see below). CLIP CROSS-CHECKS (WBD HUC12 layer 6): every included listing's point falls in a 07010102 HUC12; both excluded borderline points fall in NO 07010102 HUC12 (South Pike Bay, Supervisor's Office). HUC12s: Battle Point, Chase Hotel and Conservation Building 070101020507 Leech Lake, GN Railway Bridge 070101020105 Steamboat River, Hackensack 070101020302 Pleasant Lake-Boy River, Consolidated School 070101020101 Headwaters Necktie River, Winnibigoshish Resort 070101020602 Sixmile Brook, Widow Lake 070101020304 Big Deep Lake-Boy River. WINNIBIGOSHISH RESORT DISCREPANCY: the brief listed it as verified-OUTSIDE, but the HUC8 clip puts the NPS service point 243 m INSIDE the boundary, HUC12 070101020602 contains it, and the published coordinates (47.345535, -94.208737) agree with the service point within ~45 m. Included per the clip rule; the brief's outside verdict is overturned by the WBD delineation. Margin is thin and the NPS point is a derived centroid (MAP_METHOD 'Derived by XY event point or centroid generation' for all service points) -- re-adjudicate if the boundary moves. Battle Point (21CA12, #90001144, site of the Oct 5, 1898 Battle of Sugar Point; also burials + precontact Dakota / postcontact Ojibwe archaeological resources) is POINTER-ONLY: location_precision='approximate-pointer', thpo_required='yes'. THPO permission is required before any mapping beyond the already-published general location; NEVER a precise polygon or precise point. The same pointer-only rule applies to any address-restricted site included here (Widow Lake Segment: point is the GNIS point for Widow Lake, not the segment's surveyed location). History note (NOT mapped as current): the Minnesota State Sanatorium at Ah-Gwah-Ching is a FORMER listing (delisted 2019-05-28, demolished 2008); Julius Neils House (removed 2006-07-05, burned 2005) and Sixth Street Commercial Building (removed 1987-05-15, demolished 1985) are also former listings. 90001144: service geometry NOT used -- pointer-only per brief (THPO rule); published general location only | 80001994: geometry from live NPS service (layer 0) | 02001706: geometry from live NPS service (layer 0) | 80001990: geometry from live NPS service (layer 0) | 100009470: INCLUDED by clip; geometry from live NPS service | 14000908: INCLUDED by clip on the Widow Lake GNIS proxy point; approximate-pointer only | 13001111 'South Pike Bay Site': EXCLUDED -- clip OUT | 76001049 \"Supervisor's Office Headquarters\": EXCLUDED -- clip OUT | 100000565: INCLUDED -- found by live clipped pull, not in the brief's lists | 80001989: INCLUDED -- found by live clipped pull, not in the brief's lists"
+    }
+  }
+}

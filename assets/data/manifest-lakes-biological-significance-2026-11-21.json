@@ -1,0 +1,18 @@
+{
+  "pull_date": "2026-11-21",
+  "layers": {
+    "lakes-biological-significance.geojson": {
+      "source_url": "https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_lakes_of_biological_signific/FeatureServer/0",
+      "query": "where 1=1, geometry = WBD HUC8 07010102 polygon, spatialRel=esriSpatialRelIntersects",
+      "pull_date": "2026-11-21",
+      "feature_count": 69,
+      "bytes": 1994695,
+      "lbs_class_counts": {
+        "Outstanding": 58,
+        "Moderate": 7,
+        "High": 4
+      },
+      "caveats": "DNR Lakes of Biological Significance. Research verification (synthesis \u00a73.9, 20 Nov 2026): 69 lakes. This pull: 69 features (live returnCountOnly 69). Count MATCHES the research verification. lbs_class is the significance class; plant_rank / fish_rank / herp_rank / bird_rank are the per-taxon ranks."
+    }
+  }
+}
