@@ -2772,6 +2772,14 @@ body.present .pop-zoom-hint { font-size: 0.9rem; }
   display: block; font-size: 0.82rem; color: #5c6657;
   margin: 2px 0 6px 22px;
 }
+/* Live-service note under a toggle (Sentinel-2, Nov 23, 2026):
+   the acquisition date of the newest scene over the current
+   view, shown while the layer is on (app.js: refreshSentinelDate).
+   Same indent as the error line, so it sits under the label text. */
+.tog-live-note {
+  font-size: 0.82rem; line-height: 1.45; color: var(--ink-soft);
+  padding: 0 4px 6px 26px;
+}
 /* Legend rows (swatch + label), built from LAYERS by app.js. */
 .leg-row { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 0.9rem; }
 .leg-row .tog-swatch-line, .leg-row .tog-swatch-fill,

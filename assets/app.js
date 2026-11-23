@@ -1493,7 +1493,300 @@ function cassCrvDef(year) {
   };
 }
 
+/* ---------- live image-service layers (Nov 23, 2026) ----------
+   The Satellite imagery group's layers are LIVE overlays, not
+   files — nothing is downloaded or hosted here. The Sentinel-2
+   renderings and Landsat below share the per-tile exportImage
+   pattern of the Sentinel-2 natural-colour layer: each Leaflet
+   tile is one exportImage request against the provider's
+   ImageServer, rendered with the named raster function.
+   Service URLs and raster-function names verified live over
+   Leech Lake on Nov 23, 2026 (real tiles returned for every
+   rendering wired here). */
+var SENTINEL2_SERVICE = "https://sentinel.arcgis.com/arcgis/rest/" +
+  "services/Sentinel2/ImageServer";
+var LANDSAT_SERVICE = "https://landsat.arcgis.com/arcgis/rest/" +
+  "services/Landsat/MS/ImageServer";
+function imageServiceGrid(serviceBase, rasterFunction, attribution) {
+  var Grid = L.GridLayer.extend({
+    createTile: function (coords, done) {
+      var tile = document.createElement("img");
+      tile.alt = "";
+      var size = this.getTileSize();
+      var nwPx = L.point(coords.x * size.x, coords.y * size.y);
+      var sePx = L.point(nwPx.x + size.x, nwPx.y + size.y);
+      var crs = this._map.options.crs;
+      var nw = crs.project(this._map.unproject(nwPx, coords.z));
+      var se = crs.project(this._map.unproject(sePx, coords.z));
+      var bbox = [Math.min(nw.x, se.x), Math.min(nw.y, se.y),
+        Math.max(nw.x, se.x), Math.max(nw.y, se.y)].join(",");
+      tile.onload = function () { done(null, tile); };
+      tile.onerror = function (e) { done(e, tile); };
+      tile.src = serviceBase + "/exportImage" +
+        "?bbox=" + bbox + "&bboxSR=3857&imageSR=3857" +
+        "&size=" + size.x + "," + size.y +
+        "&format=jpgpng&transparent=false" +
+        "&renderingRule=" + encodeURIComponent(JSON.stringify(
+          { rasterFunction: rasterFunction })) +
+        "&f=image";
+      return tile;
+    },
+  });
+  return new Grid({ maxZoom: 18, attribution: attribution });
+}
+
 var LAYERS = [
+  {
+    /* Sentinel-2 \u2014 latest imagery (prototype, Nov 23, 2026):
+       a LIVE overlay, not a file \u2014 nothing is downloaded or
+       hosted here. Each Leaflet tile is an exportImage request
+       against Esri's Sentinel-2 ImageServer (Sentinel-2 on AWS),
+       the same per-tile export pattern the GLO survey plats
+       overlay below uses, and the same call esri-leaflet's
+       imageMapLayer makes under the hood. The service is
+       time-enabled and updated daily with the past 14 months of
+       10 m multispectral scenes; with no mosaicRule sent, the
+       service's own mosaic default decides which scene shows
+       (its most recent acquisition, no cloud filtering added
+       here), rendered with the service's "Natural Color with
+       DRA" raster function (bands 4, 3, 2). The newest scene
+       may be cloudy or weeks old in a cloudy stretch \u2014 the
+       acquisition date of the newest scene over the current
+       view is fetched from the service's catalog and shown
+       under this layer's toggle while it is on
+       (refreshSentinelDate, below). OFF by default, in its own
+       top-level "Satellite imagery" group — added at the head
+       of the panel, then moved to the bottom, just above the
+       basemap section, later the same day (Paul, Nov 23, 2026).
+       Service: https://sentinel.arcgis.com/arcgis/rest/services/Sentinel2/ImageServer */
+    id: "sentinel-2-latest",
+    label: "Sentinel-2 \u2014 latest imagery",
+    title: "Sentinel-2 satellite imagery streamed live from " +
+      "Esri (Sentinel-2 on AWS) \u2014 10 m, natural colour, the " +
+      "most recent scene in the service's own mosaic, updated " +
+      "daily over the past 14 months. The latest scene may be " +
+      "cloudy or weeks old in a cloudy stretch. Prototype " +
+      "layer, off by default",
+    onByDefault: false, group: "Satellite imagery",
+    swatch: { kind: "fill", color: "#4c7a5a", border: "#33523d" },
+    anchor: "sentinel-2",
+    liveNote: true,
+    makeLayer: function () {
+      var def = this;
+      var SentinelGrid = L.GridLayer.extend({
+        createTile: function (coords, done) {
+          var tile = document.createElement("img");
+          tile.alt = "";
+          var size = this.getTileSize();
+          var nwPx = L.point(coords.x * size.x, coords.y * size.y);
+          var sePx = L.point(nwPx.x + size.x, nwPx.y + size.y);
+          var crs = this._map.options.crs;
+          var nw = crs.project(this._map.unproject(nwPx, coords.z));
+          var se = crs.project(this._map.unproject(sePx, coords.z));
+          var bbox = [Math.min(nw.x, se.x), Math.min(nw.y, se.y),
+            Math.max(nw.x, se.x), Math.max(nw.y, se.y)].join(",");
+          tile.onload = function () { done(null, tile); };
+          tile.onerror = function (e) { done(e, tile); };
+          tile.src = "https://sentinel.arcgis.com/arcgis/rest/" +
+            "services/Sentinel2/ImageServer/exportImage" +
+            "?bbox=" + bbox + "&bboxSR=3857&imageSR=3857" +
+            "&size=" + size.x + "," + size.y +
+            "&format=jpgpng&transparent=false" +
+            "&renderingRule=" + encodeURIComponent(JSON.stringify(
+              { rasterFunction: "Natural Color with DRA" })) +
+            "&f=image";
+          return tile;
+        },
+      });
+      window.setTimeout(function () { refreshSentinelDate(def); }, 0);
+      return new SentinelGrid({
+        maxZoom: 18,
+        attribution: "Sentinel-2 imagery (latest): Esri, " +
+          "European Commission, European Space Agency, " +
+          "Amazon Web Services",
+      });
+    },
+  },
+  {
+    /* Sentinel-2 — color infrared (Nov 23, 2026): the same live
+       service, scenes and mosaic as the natural-colour layer
+       above, rendered with the service's "Color Infrared with
+       DRA" raster function (near-infrared shown as red) —
+       living vegetation glows red and pink, clear water reads
+       near-black. Same newest-scene date note under the toggle. */
+    id: "sentinel-2-cir",
+    label: "Sentinel-2 \u2014 color infrared",
+    title: "Sentinel-2 satellite imagery streamed live from " +
+      "Esri (Sentinel-2 on AWS) \u2014 10 m, colour infrared " +
+      "(near-infrared as red): vegetation glows red, clear " +
+      "water near-black. The most recent scene in the " +
+      "service's own mosaic, updated daily over the past 14 " +
+      "months. Off by default",
+    onByDefault: false, group: "Satellite imagery",
+    swatch: { kind: "fill", color: "#c0452f", border: "#7e2f1f" },
+    anchor: "sentinel-2-cir",
+    liveNote: true,
+    makeLayer: function () {
+      var def = this;
+      window.setTimeout(function () { refreshLiveNote(def); }, 0);
+      return imageServiceGrid(SENTINEL2_SERVICE,
+        "Color Infrared with DRA",
+        "Sentinel-2 imagery (color infrared): Esri, European " +
+          "Commission, European Space Agency, Amazon Web Services");
+    },
+  },
+  {
+    /* Sentinel-2 — NDVI (Nov 23, 2026): the same live service
+       and mosaic, rendered with the service's "NDVI Colormap"
+       raster function — the vegetation index on a colour ramp,
+       bare ground and water at the low (red/brown) end, dense
+       green vegetation at the high (green) end. */
+    id: "sentinel-2-ndvi",
+    label: "Sentinel-2 \u2014 NDVI (vegetation)",
+    title: "Sentinel-2 NDVI streamed live from Esri (Sentinel-2 " +
+      "on AWS) \u2014 10 m vegetation index on a colour ramp: " +
+      "bare ground and water low (red/brown), dense vegetation " +
+      "high (green). The most recent scene in the service's " +
+      "own mosaic. Off by default",
+    onByDefault: false, group: "Satellite imagery",
+    swatch: { kind: "fill", color: "#4a7d23", border: "#33551a" },
+    anchor: "sentinel-2-ndvi",
+    liveNote: true,
+    makeLayer: function () {
+      var def = this;
+      window.setTimeout(function () { refreshLiveNote(def); }, 0);
+      return imageServiceGrid(SENTINEL2_SERVICE, "NDVI Colormap",
+        "Sentinel-2 imagery (NDVI): Esri, European Commission, " +
+          "European Space Agency, Amazon Web Services");
+    },
+  },
+  {
+    /* Sentinel-2 — NDWI (Nov 23, 2026): the same live service
+       and mosaic, rendered with the service's "NDWI Raw" raster
+       function — the normalised difference water index, in
+       which open water stands out bright against land. */
+    id: "sentinel-2-ndwi",
+    label: "Sentinel-2 \u2014 NDWI (water)",
+    title: "Sentinel-2 NDWI streamed live from Esri (Sentinel-2 " +
+      "on AWS) \u2014 10 m water index: open water stands out " +
+      "bright against land. The most recent scene in the " +
+      "service's own mosaic. Off by default",
+    onByDefault: false, group: "Satellite imagery",
+    swatch: { kind: "fill", color: "#1d6fb8", border: "#144e82" },
+    anchor: "sentinel-2-ndwi",
+    liveNote: true,
+    makeLayer: function () {
+      var def = this;
+      window.setTimeout(function () { refreshLiveNote(def); }, 0);
+      return imageServiceGrid(SENTINEL2_SERVICE, "NDWI Raw",
+        "Sentinel-2 imagery (NDWI): Esri, European Commission, " +
+          "European Space Agency, Amazon Web Services");
+    },
+  },
+  {
+    /* Sentinel-2 — bathymetric (Nov 23, 2026): the same live
+       service and mosaic, rendered with the service's
+       "Bathymetric with DRA" raster function — a band ratio
+       tuned to penetrate shallow water, so the lake's shoals
+       and shallow bays separate by depth; it is a water
+       rendering, and land reads washed-out under it. */
+    id: "sentinel-2-bathymetric",
+    label: "Sentinel-2 \u2014 bathymetric (shallow water)",
+    title: "Sentinel-2 bathymetric rendering streamed live " +
+      "from Esri (Sentinel-2 on AWS) \u2014 10 m, tuned for " +
+      "shallow water: shoals and shallow bays separate by " +
+      "depth, land reads washed-out. The most recent scene in " +
+      "the service's own mosaic. Off by default",
+    onByDefault: false, group: "Satellite imagery",
+    swatch: { kind: "fill", color: "#1f8a8a", border: "#146060" },
+    anchor: "sentinel-2-bathymetric",
+    liveNote: true,
+    makeLayer: function () {
+      var def = this;
+      window.setTimeout(function () { refreshLiveNote(def); }, 0);
+      return imageServiceGrid(SENTINEL2_SERVICE,
+        "Bathymetric with DRA",
+        "Sentinel-2 imagery (bathymetric): Esri, European " +
+          "Commission, European Space Agency, Amazon Web Services");
+    },
+  },
+  {
+    /* Landsat 8/9 — latest imagery (Nov 23, 2026): a LIVE
+       overlay from Esri's Landsat image service (Landsat on
+       AWS; USGS/NASA data), the same per-tile exportImage
+       pattern as the Sentinel-2 layers, rendered with the
+       service's "Natural Color with DRA" raster function. The
+       service is time-enabled; with no mosaic rule sent, its
+       own mosaic default shows the newest scene (verified live
+       over Leech Lake Nov 23, 2026: real tiles, and the newest
+       scene over the lake then was a Landsat 9 pass of
+       13 Nov 2026 at 0.05% cloud). 30 m — coarser than
+       Sentinel-2 — but the Landsat archive reaches back to
+       1984, far past Sentinel-2's 14-month window; the newest
+       scene's date, satellite and scene cloud cover over the
+       current view are shown under the toggle
+       (refreshLandsatDate, below). OFF by default.
+       Service: https://landsat.arcgis.com/arcgis/rest/services/Landsat/MS/ImageServer */
+    id: "landsat-latest",
+    label: "Landsat 8/9 \u2014 latest imagery",
+    title: "Landsat 8/9 satellite imagery streamed live from " +
+      "Esri's Landsat image service (USGS/NASA) \u2014 30 m, " +
+      "natural colour, the newest scene in the service's " +
+      "mosaic. Coarser than Sentinel-2, but the Landsat " +
+      "archive reaches back to 1984. The newest scene may be " +
+      "cloudy; its date and cloud cover show under the " +
+      "toggle. Off by default",
+    onByDefault: false, group: "Satellite imagery",
+    swatch: { kind: "fill", color: "#8a6d3b", border: "#5f4a27" },
+    anchor: "landsat-latest",
+    liveNote: true,
+    dateKind: "landsat",
+    makeLayer: function () {
+      var def = this;
+      window.setTimeout(function () { refreshLiveNote(def); }, 0);
+      return imageServiceGrid(LANDSAT_SERVICE,
+        "Natural Color with DRA",
+        "Landsat 8/9 imagery (latest): Esri, USGS, NASA");
+    },
+  },
+  {
+    /* NASA daily true-color (Nov 23, 2026): a LIVE overlay from
+       NASA GIBS — the MODIS Terra corrected-reflectance
+       true-colour layer (250 m), served as WMTS tiles in the
+       GoogleMapsCompatible_Level9 matrix set (native to zoom
+       9; Leaflet scales the tiles past that). A fresh picture
+       every day — coarse, but daily, and the one to watch for
+       snow and ice. GIBS posts each day's pass some hours after
+       it is taken and serves a solid-black tile for a day not
+       yet posted, so the freshest day is probed live at first
+       switch-on (refreshNasaNote, below): candidate days are
+       tested newest-first until one returns real imagery, and
+       that date is shown under the toggle and used in the tile
+       URL. OFF by default.
+       Service: https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/ */
+    id: "nasa-daily",
+    label: "NASA daily true-color (MODIS/VIIRS)",
+    title: "NASA's daily true-colour picture of the Earth " +
+      "(MODIS Terra, via NASA GIBS) \u2014 250 m, a fresh image " +
+      "every day. Coarse, but daily \u2014 good for watching " +
+      "snow and ice come and go. The freshest day with " +
+      "imagery is probed live and shown under the toggle. " +
+      "Off by default",
+    onByDefault: false, group: "Satellite imagery",
+    swatch: { kind: "fill", color: "#54687f", border: "#37485c" },
+    anchor: "nasa-daily",
+    liveNote: true,
+    dateKind: "nasa",
+    makeLayer: function () {
+      var def = this;
+      window.setTimeout(function () { refreshLiveNote(def); }, 0);
+      return L.tileLayer(nasaTileUrl(nasaDateGuess()), {
+        maxZoom: 18, maxNativeZoom: 9,
+        attribution: "Daily true-color imagery: NASA GIBS / " +
+          "EOSDIS (MODIS Terra)",
+      });
+    },
+  },
   {
     id: "watershed-basin", label: "Watershed \u2014 whole basin",
     title: "The whole Leech Lake River basin (DNR Major 8) \u2014 " +
@@ -5504,6 +5797,200 @@ function layerById(id) {
   return null;
 }
 
+/* ---------- Sentinel-2 acquisition date ----------
+   The Sentinel-2 service is time-enabled: its catalog query
+   returns the acquisition date of the newest scene over a
+   given envelope. While the layer is on, that date is shown
+   under the layer's toggle in the panel (def.noteEl), so the
+   reader can see how fresh the "latest" imagery over the
+   current view actually is — in a cloudy stretch the newest
+   scene can be weeks old. The query is read-only metadata;
+   no imagery is fetched or stored by it. */
+function refreshSentinelDate(def) {
+  if (!def || !def.noteEl || def._dateBusy) return;
+  def._dateBusy = true;
+  var b = map.getBounds();
+  var geom = JSON.stringify({
+    xmin: b.getWest(), ymin: b.getSouth(),
+    xmax: b.getEast(), ymax: b.getNorth(),
+    spatialReference: { wkid: 4326 },
+  });
+  var url = "https://sentinel.arcgis.com/arcgis/rest/services/" +
+    "Sentinel2/ImageServer/query?where=1%3D1&geometry=" +
+    encodeURIComponent(geom) +
+    "&geometryType=esriGeometryEnvelope" +
+    "&spatialRel=esriSpatialRelIntersects" +
+    "&outFields=acquisitiondate" +
+    "&orderByFields=acquisitiondate%20DESC" +
+    "&resultRecordCount=1&returnGeometry=false&f=json";
+  fetch(url).then(function (r) { return r.json(); })
+    .then(function (d) {
+      def._dateBusy = false;
+      var f = d && d.features && d.features[0];
+      var ts = f && f.attributes && f.attributes.acquisitiondate;
+      if (!ts) return;
+      var dt = new Date(ts);
+      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      def.noteEl.textContent = "Newest scene over the current " +
+        "view: acquired " + dt.getUTCDate() + " " +
+        months[dt.getUTCMonth()] + " " + dt.getUTCFullYear() +
+        ". The service's mosaic may blend neighbouring scenes, " +
+        "so the date can vary across the view.";
+      def.noteEl.hidden = !(def.box && def.box.checked);
+    })
+    .catch(function () { def._dateBusy = false; });
+}
+/* ---------- live-layer date notes (Nov 23, 2026) ----------
+   One dispatcher for every Satellite imagery layer's date
+   note: the Sentinel-2 layers share the Sentinel-2 catalog
+   query above; Landsat and NASA have their own, below. */
+function refreshLiveNote(def) {
+  if (!def) return;
+  if (def.dateKind === "landsat") refreshLandsatDate(def);
+  else if (def.dateKind === "nasa") refreshNasaNote(def);
+  else refreshSentinelDate(def);
+}
+function fmtDayUTC(dt) {
+  var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return dt.getUTCDate() + " " + months[dt.getUTCMonth()] + " " +
+    dt.getUTCFullYear();
+}
+/* Landsat: the newest scene over the current view, from the
+   Landsat service's catalog (AcquisitionDate, with the scene's
+   satellite and its stored cloud-cover percentage). */
+function refreshLandsatDate(def) {
+  if (!def || !def.noteEl || def._dateBusy) return;
+  def._dateBusy = true;
+  var b = map.getBounds();
+  var geom = JSON.stringify({
+    xmin: b.getWest(), ymin: b.getSouth(),
+    xmax: b.getEast(), ymax: b.getNorth(),
+    spatialReference: { wkid: 4326 },
+  });
+  var url = LANDSAT_SERVICE + "/query?where=1%3D1&geometry=" +
+    encodeURIComponent(geom) +
+    "&geometryType=esriGeometryEnvelope" +
+    "&spatialRel=esriSpatialRelIntersects" +
+    "&outFields=AcquisitionDate,CloudCover,SensorName" +
+    "&orderByFields=AcquisitionDate%20DESC" +
+    "&resultRecordCount=1&returnGeometry=false&f=json";
+  fetch(url).then(function (r) { return r.json(); })
+    .then(function (d) {
+      def._dateBusy = false;
+      var f = d && d.features && d.features[0];
+      var a = f && f.attributes;
+      if (!a || !a.AcquisitionDate) return;
+      var cc = a.CloudCover;
+      var ccText = (typeof cc === "number")
+        ? (cc < 1 ? "under 1%" : Math.round(cc) + "%") : null;
+      def.noteEl.textContent = "Newest scene over the current " +
+        "view: acquired " + fmtDayUTC(new Date(a.AcquisitionDate)) +
+        (a.SensorName ? " by " + a.SensorName : "") +
+        (ccText ? " (scene cloud cover " + ccText + ")" : "") +
+        ". The service's mosaic may blend neighbouring scenes, " +
+        "so the date can vary across the view.";
+      def.noteEl.hidden = !(def.box && def.box.checked);
+    })
+    .catch(function () { def._dateBusy = false; });
+}
+/* NASA GIBS daily true-colour: the tile URL carries a date, so
+   the freshest day has to be found before the layer can show
+   it. GIBS serves a solid-black tile for a day whose pass is
+   not posted yet (verified Nov 23, 2026: that day's tile over
+   the lake was pure black, the day before's was real imagery),
+   and its tiles are CORS-open, so the probe loads the tile
+   over Leech Lake for each candidate day, newest first, and
+   reads its pixels: the first day that is not solid black is
+   the freshest day with imagery. */
+var nasaDateStr = null;
+var nasaProbeBusy = false;
+function nasaIso(d) { return d.toISOString().slice(0, 10); }
+function nasaTileUrl(dateStr) {
+  return "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/" +
+    "MODIS_Terra_CorrectedReflectance_TrueColor/default/" +
+    dateStr + "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg";
+}
+function nasaDateGuess() {
+  /* Before the probe lands: yesterday (UTC) — in practice the
+     freshest posted day by the time anyone looks. */
+  return nasaDateStr ||
+    nasaIso(new Date(Date.now() - 86400000));
+}
+function nasaProbeTileUrl(dateStr) {
+  var z = 9, n = Math.pow(2, z);
+  var latR = 47.2 * Math.PI / 180;
+  var x = Math.floor((-94.3 + 180) / 360 * n);
+  var y = Math.floor((1 - Math.log(Math.tan(latR) +
+    1 / Math.cos(latR)) / Math.PI) / 2 * n);
+  return nasaTileUrl(dateStr)
+    .replace("{z}", z).replace("{y}", y).replace("{x}", x);
+}
+function nasaDayIsBlank(dateStr, cb) {
+  var img = new Image();
+  img.crossOrigin = "anonymous";
+  img.onload = function () {
+    try {
+      var cv = document.createElement("canvas");
+      cv.width = 256; cv.height = 256;
+      var cx = cv.getContext("2d");
+      cx.drawImage(img, 0, 0);
+      var px = cx.getImageData(0, 0, 256, 256).data;
+      var max = 0;
+      for (var i = 0; i < px.length; i += 4 * 991) {
+        var m = Math.max(px[i], px[i + 1], px[i + 2]);
+        if (m > max) max = m;
+      }
+      cb(max <= 8);
+    } catch (e) { cb(false); }
+  };
+  img.onerror = function () { cb(true); };
+  img.src = nasaProbeTileUrl(dateStr);
+}
+function refreshNasaNote(def) {
+  if (!def || !def.noteEl) return;
+  function apply() {
+    def.noteEl.textContent = "Freshest day with imagery: " +
+      fmtDayUTC(new Date(nasaDateStr + "T00:00:00Z")) +
+      " (MODIS Terra, 250 m). Probed live against NASA GIBS " +
+      "\u2014 each day's pass is posted some hours after it is " +
+      "taken, so the newest day is usually yesterday.";
+    def.noteEl.hidden = !(def.box && def.box.checked);
+    if (def.layer && def.layer.setUrl) {
+      def.layer.setUrl(nasaTileUrl(nasaDateStr));
+    }
+  }
+  if (nasaDateStr) { apply(); return; }
+  if (nasaProbeBusy) return;
+  nasaProbeBusy = true;
+  var offset = 0;
+  (function step() {
+    if (offset > 7) {
+      nasaProbeBusy = false;
+      nasaDateStr = nasaIso(new Date(Date.now() - 86400000));
+      apply();
+      return;
+    }
+    var ds = nasaIso(new Date(Date.now() - offset * 86400000));
+    nasaDayIsBlank(ds, function (blank) {
+      if (blank) { offset++; step(); }
+      else { nasaProbeBusy = false; nasaDateStr = ds; apply(); }
+    });
+  })();
+}
+var liveDateTimer = null;
+map.on("moveend", function () {
+  if (liveDateTimer) window.clearTimeout(liveDateTimer);
+  liveDateTimer = window.setTimeout(function () {
+    LAYERS.forEach(function (def) {
+      if (def.noteEl && def.box && def.box.checked) {
+        refreshLiveNote(def);
+      }
+    });
+  }, 800);
+});
+
 /* ---------- lazy loading + zoom gate ---------- */
 /* Zoom-gated layers (each carries its own minZoom): their files
    are never fetched below the gate zoom, and a loaded gated layer
@@ -5603,7 +6090,9 @@ function ensureLayer(def, announce) {
    the other big fills (watershed, reservation, lakes, infested
    waters), then the tributary lines, then the point layers on
    top. */
-var DRAW_ORDER = ["glo-plats", "cass-aerial-2024",
+var DRAW_ORDER = ["sentinel-2-latest", "sentinel-2-cir",
+  "sentinel-2-ndvi", "sentinel-2-ndwi", "sentinel-2-bathymetric",
+  "landsat-latest", "nasa-daily", "glo-plats", "cass-aerial-2024",
   "cass-aerial-2020", "cass-aerial-2017", "topo-bemidji-1954",
   "topo-bemidji-1957", "topo-bemidji-1958", "topo-100k",
   "topo-1970s", "topo-1996",
@@ -5672,10 +6161,17 @@ map.on("zoomend", function () {
    (Paul's layer-organization plan, Nov 21, 2026): the lake
    itself, the watershed around it, the land, trails, history,
    people, politics — and the basemaps last, in their own
-   section below the layer list. PANEL_LAYOUT fixes the eight
+   section below the layer list. PANEL_LAYOUT fixes the
    groups, the sub-groups inside History and Political &
    administrative, and the layer order inside them; every
-   layer appears exactly once. The reorganization moved
+   layer appears exactly once. (Nov 23, 2026: a ninth group,
+   Satellite imagery, was added at the head of the panel for
+   the prototype Sentinel-2 layer, then moved to the bottom
+   of the panel — the last group, just above the basemap
+   section — and joined by the other live satellite layers
+   (four more Sentinel-2 renderings, Landsat 8/9 and NASA
+   daily true-colour), per Paul's direction; no existing
+   group, order or default changed.) The reorganization moved
    groups and order only — no layer was added, removed,
    re-defaulted or re-styled. Two of Paul's calls of
    Nov 21, 2026: Marschner vegetation sits in Land & habitat
@@ -5762,6 +6258,11 @@ var PANEL_LAYOUT = [
         "cass-walker-wellhead-protection"] },
     { name: "Townships", ids: ["townships"] },
   ]},
+  { group: "Satellite imagery", sections: [
+    { ids: ["sentinel-2-latest", "sentinel-2-cir", "sentinel-2-ndvi",
+      "sentinel-2-ndwi", "sentinel-2-bathymetric", "landsat-latest",
+      "nasa-daily"] },
+  ]},
 ];
 var togglesEl = document.getElementById("layer-toggles");
 LAYERS.forEach(function (def) {
@@ -5804,6 +6305,16 @@ LAYERS.forEach(function (def) {
   def.box = box;
   def.errEl = errEl;
   def._label = label;
+  /* Live-service note (Satellite imagery, Nov 23, 2026): a
+     line under the toggle that a live layer fills in while it
+     is on — the acquisition date of the newest scene over the
+     current view (refreshLiveNote dispatches per layer). */
+  if (def.liveNote) {
+    var noteEl = document.createElement("div");
+    noteEl.className = "tog-live-note";
+    noteEl.hidden = true;
+    def.noteEl = noteEl;
+  }
   if (def.minZoom) {
     var note = document.createElement("span");
     note.className = "tog-note";
@@ -5818,6 +6329,10 @@ LAYERS.forEach(function (def) {
       map.removeLayer(def.layer);
     }
     if (def.gateNote && !box.checked) def.gateNote.textContent = "";
+    if (def.noteEl) {
+      def.noteEl.hidden = !(box.checked && def.noteEl.textContent);
+      if (box.checked) refreshLiveNote(def);
+    }
     /* The Census panel legend follows the census toggles:
        it shows while any census layer is on, and the hint
        stands in its place while none is. */
@@ -5994,6 +6509,7 @@ PANEL_LAYOUT.forEach(function (g) {
       if (!def || !def._label) return;
       parent.appendChild(def._label);
       parent.appendChild(def.errEl);
+      if (def.noteEl) parent.appendChild(def.noteEl);
       placedLayers[id] = true;
       sRec.rows.push(def);
     });
@@ -6008,6 +6524,7 @@ LAYERS.forEach(function (def) {
   if (!def._label || placedLayers[def.id] || !togglesEl) return;
   togglesEl.appendChild(def._label);
   togglesEl.appendChild(def.errEl);
+  if (def.noteEl) togglesEl.appendChild(def.noteEl);
   if (panelIndex.length) {
     panelIndex[panelIndex.length - 1].sections.push(
       { head: null, body: null, rows: [def] });
@@ -6049,6 +6566,7 @@ if (censusGroupBodyEl && censusPanelLegendEl) {
             def.label.toLowerCase().indexOf(q) !== -1;
           def._label.style.display = match ? "" : "none";
           def.errEl.style.display = match ? "" : "none";
+          if (def.noteEl) def.noteEl.style.display = match ? "" : "none";
           if (match) secMatch = true;
         });
         if (sRec.head) sRec.head.style.display = secMatch ? "" : "none";
@@ -6170,6 +6688,22 @@ if (censusGroupBodyEl && censusPanelLegendEl) {
     "zoom 11 and closer. Land cover (NLCD 2021) is a live " +
     "30 m raster overlay streamed from MRLC.";
   legend.appendChild(heavyNote);
+  var sentinelNote = document.createElement("p");
+  sentinelNote.className = "pop-note";
+  sentinelNote.textContent = "Sentinel-2 \u2014 latest imagery is a " +
+    "live 10 m satellite overlay streamed from Esri (Sentinel-2 " +
+    "on AWS): natural colour, the most recent scene in the " +
+    "service's own mosaic, updated daily over the past 14 " +
+    "months. The latest scene may be cloudy or weeks old in a " +
+    "cloudy stretch; while the layer is on, the panel shows " +
+    "the acquisition date of the newest scene over the current " +
+    "view. The colour-infrared, NDVI, NDWI and bathymetric " +
+    "layers are the same scenes through the service's other " +
+    "renderings. Landsat 8/9 is the same idea at 30 m, with " +
+    "an archive reaching back to 1984; NASA daily true-color " +
+    "is a coarse 250 m MODIS picture refreshed every day " +
+    "\u2014 the one to watch for snow and ice.";
+  legend.appendChild(sentinelNote);
   var cassNote = document.createElement("p");
   cassNote.className = "pop-note";
   cassNote.textContent = "The Cass County layers are the county " +
